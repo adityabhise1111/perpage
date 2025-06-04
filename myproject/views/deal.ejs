@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Create a Deal - PerPage</title>
+</head>
+<body>
+  <h1>Create a New Deal</h1>
+
+  <form action="/deal" method="POST">
+    <label>User ID:</label><br>
+    <input type="text" name="userId" required><br><br>
+
+    <label>Writer ID:</label><br>
+    <input type="text" name="writerId" required><br><br>
+
+    <label>Page Count:</label><br>
+    <input type="number" name="pages" required><br><br>
+
+    <label>Total Price (Rs):</label><br>
+    <input type="number" name="totalPrice" required><br><br>
+
+    <label>User Notes:</label><br>
+    <textarea name="userNotes" rows="4" cols="40"></textarea><br><br>
+
+    <label>Writer Notes:</label><br>
+    <textarea name="writerNotes" rows="4" cols="40"></textarea><br><br>
+
+    <label>File Links (comma-separated URLs):</label><br>
+    <input type="text" name="fileLinks"><br><br>
+
+    <label>Status:</label><br>
+    <select name="status">
+      <option value="pending" selected>Pending</option>
+      <option value="accepted">Accepted</option>
+      <option value="in-progress">In Progress</option>
+      <option value="submitted">Submitted</option>
+      <option value="completed">Completed</option>
+      <option value="rejected">Rejected</option>
+    </select><br><br>
+
+    <label>Submission Files (comma-separated URLs):</label><br>
+    <input type="text" name="submissionFiles"><br><br>
+
+    <button type="submit">Submit Deal</button>
+  </form>
+</body>
+</html>

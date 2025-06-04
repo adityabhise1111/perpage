@@ -1,69 +1,79 @@
-const express = require('express');
+import express from 'express';
+import mongoose from 'mongoose';
+import dotenv from 'dotenv';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+import Deal from './models/deal.js';
+
+dotenv.config();
+
 const app = express();
-const port = process.env.PORT || 3000;
 
-// Set EJS as the view engine
-app.set('view engine', 'ejs');
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-// Middleware for parsing JSON and form data
-app.use(express.json());
+// Middleware
 app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 
-// Serve static files (CSS, JS, images) from 'public' folder
-app.use(express.static('public'));
+// View engine setup
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));
 
-// Routes rendering EJS templates
+// Routes
 
+// Home page
 app.get('/', (req, res) => {
-  res.render('home'); // renders views/home.ejs
+  res.render('home');
 });
 
-app.get('/register', (req, res) => {
-  res.render('register');
+// Show deal form
+app.get('/deal', (req, res) => {
+  res.render('deal');
 });
 
-app.post('/register', (req, res) => {
-  // Registration logic here
-  res.send('Register POST');
+// Handle deal form submission
+app.post('/deal', async (req, res) => {
+  try {
+    const {
+      userId,
+      writerId,
+      pages,
+      totalPrice,
+      userNotes,
+      writerNotes,
+      fileLinks,
+      status,
+      submissionFiles
+    } = req.body;
+
+    const deal = new Deal({
+      userId,
+      writerId,
+      pages,
+      totalPrice,
+      userNotes,
+      writerNotes,
+      status,
+      fileLinks: fileLinks?.split(',').map(link => link.trim()),
+      submissionFiles: submissionFiles?.split(',').map(link => link.trim())
+    });
+
+    await deal.save();
+    res.send('Deal created successfully!');
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Error creating deal');
+  }
 });
 
-app.get('/login', (req, res) => {
-  res.render('login');
-});
-
-app.post('/login', (req, res) => {
-  // Login logic here
-  res.send('Login POST');
-});
-
-app.post('/logout', (req, res) => {
-  // Logout logic here
-  res.send('Logout POST');
-});
-
-app.get('/writers', (req, res) => {
-  // Example: pass writers list (empty for now)
-  res.render('writers', { writers: [] });
-});
-
-app.get('/profile/:userId', (req, res) => {
-  const userId = req.params.userId;
-  res.render('profile', { userId });
-});
-
-app.post('/deal', (req, res) => {
-  // Handle deal creation here
-  res.send('Deal Created');
-});
-
-app.get('/dashboard', (req, res) => {
-  res.render('dashboard');
-});
-
-app.get('/admin', (req, res) => {
-  res.render('admin');
-});
-
-app.listen(port, () => {
-  console.log(`Server running at http://localhost:${port}`);
-});
+// Connect to MongoDB and start server
+mongoose.connect(process.env.MONGO_URI)
+  .then(() => {
+    console.log('Connected to MongoDB');
+    app.listen(3000, () => console.log('Server running on http://localhost:3000'));
+  })
+  .catch(err => {
+    console.error('MongoDB connection error:', err);
+  });
