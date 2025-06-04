@@ -1,9 +1,71 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Dashboard - PerPage</title>
+  <title>Deals Dashboard</title>
+  <style>
+    table {
+      border-collapse: collapse;
+      width: 100%;
+    }
+    th, td {
+      padding: 8px 12px;
+      border: 1px solid #ddd;
+      text-align: left;
+    }
+    th {
+      background-color: #f2f2f2;
+    }
+    button {
+      padding: 5px 10px;
+      cursor: pointer;
+    }
+  </style>
 </head>
 <body>
-  <h1>This is the User Dashboard</h1>
+  <h1>Deals Dashboard</h1>
+  <table>
+    <thead>
+      <tr>
+        <th>User ID</th>
+        <th>Writer ID</th>
+        <th>Pages</th>
+        <th>Total Price</th>
+        <th>Status</th>
+        <th>File(s)</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% deals.forEach(deal => { %>
+        <tr>
+          <td><%= deal.userId %></td>
+          <td><%= deal.writerId %></td>
+          <td><%= deal.pages %></td>
+          <td><%= deal.totalPrice %></td>
+          <td><%= deal.status %></td>
+          <td>
+            <% if(deal.fileLinks && deal.fileLinks.length > 0) { %>
+              <% deal.fileLinks.forEach((link, idx) => { %>
+                <div><%= link %></div>
+              <% }) %>
+            <% } else { %>
+              No files
+            <% } %>
+          </td>
+          <td>
+            <% if(deal.fileLinks && deal.fileLinks.length > 0) { %>
+              <% deal.fileLinks.forEach((link, idx) => { %>
+                <a href="<%= link %>" download>
+                  <button>Download File <%= idx + 1 %></button>
+                </a>
+              <% }) %>
+            <% } else { %>
+              -
+            <% } %>
+          </td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
 </body>
 </html>

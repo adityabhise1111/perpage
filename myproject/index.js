@@ -27,6 +27,9 @@ app.get('/', (req, res) => {
   res.render('home');
 });
 
+//use dashboard router
+app.use('/dashboard', dashboardRoutes);
+
 // Use deal router for /deal route
 app.use('/deal', dealRoutes);
 
