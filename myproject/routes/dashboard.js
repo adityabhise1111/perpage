@@ -6,7 +6,13 @@ import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 
 const router = express.Router();
 
-router.get('/', async (req, res) => {
+// Middleware to protect route
+function checkAuthenticated(req, res, next) {
+  if (req.isAuthenticated()) return next();
+  res.redirect('/login');
+}
+
+router.get('/',checkAuthenticated, async (req, res) => {
   try {
     const deals = await Deal.find().lean();
 

@@ -6,6 +6,13 @@ import Deal from '../models/deal.js';
 
 const router = express.Router();
 
+
+// Middleware to protect route
+function checkAuthenticated(req, res, next) {
+  if (req.isAuthenticated()) return next();
+  res.redirect('/login');
+}
+
 // Multer config
 const upload = multer({
   storage: multer.memoryStorage(),
@@ -13,12 +20,12 @@ const upload = multer({
 });
 
 // GET /deal
-router.get('/', (req, res) => {
+router.get('/', checkAuthenticated, (req, res) => {
   res.render('deal');
 });
 
 // POST /deal
-router.post('/', upload.single('file'), async (req, res) => {
+router.post('/', checkAuthenticated, upload.single('file'), async (req, res) => {
   try {
     const {
       userId,
