@@ -6,9 +6,14 @@ import { fileURLToPath } from 'url';
 import session from 'express-session';
 import MongoStore from 'connect-mongo';
 import passport from 'passport';
-import  initialize  from './passport-config.js';
+import initialize from './config/passport-config.js';
+import connectDB from './config/db.js';
 
-import dealRoutes from './routes/deal.js';  
+
+// Route imports
+import authRoutes from './routes/auth.js';
+import homeRoutes from './routes/home.js';
+import dealRoutes from './routes/deal.js';
 import dashboardRoutes from './routes/dashboard.js';
 
 dotenv.config();
@@ -19,26 +24,27 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const port = 3000;
 
-// Connect to MongoDB
-const connectDB = async () => {
-  try {
-    await mongoose.connect(process.env.MONGO_URL);
-    console.log('Connected to MongoDB');
-  } catch (err) {
-    console.error('MongoDB connection error:', err);
-    throw err;
-  }
-};
+// // MongoDB Connection
+// const connectDB = async () => {
+//   try {
+//     await mongoose.connect(process.env.MONGO_URL);
+//     console.log('✅ Connected to MongoDB');
+//   } catch (err) {
+//     console.error('❌ MongoDB connection error:', err);
+//     throw err;
+//   }
+// };
 
 // Middleware
+
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-// Set view engine and views path
+// View Engine
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
-// Session middleware (important to load before passport)
+// Session Middleware
 app.use(session({
   secret: 'secretkey',
   resave: false,
@@ -49,76 +55,34 @@ app.use(session({
   })
 }));
 
-// Initialize Passport and session
+// Passport Initialization
 initialize(passport);
 app.use(passport.initialize());
 app.use(passport.session());
 
-// Routes
+// Static Files (Optional)
+app.use(express.static(path.join(__dirname, 'public')));
 
-// Root redirect
+// Route Mounting
+app.use('/', authRoutes);         // /login, /register, /auth/google, etc.
+app.use('/home', homeRoutes);     // /home (protected)
+app.use('/deal', dealRoutes);     // /deal (uploads, forms)
+app.use('/dashboard', dashboardRoutes); // /dashboard view
+
+// Default Route
 app.get('/', (req, res) => {
   res.redirect('/home');
 });
 
-// Auth routes
-app.get('/register', (req, res) => {
-  res.render('register');
-});
-
-app.get('/login', (req, res) => {
-  res.render('login-improved');
-});
-
-app.post('/login', passport.authenticate('local', {
-  successRedirect: '/home',
-  failureRedirect: '/login',
-  failureMessage: true
-}));
-
-// Google OAuth routes
-app.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
-
-app.get('/auth/google/callback', 
-  passport.authenticate('google', {
-    successRedirect: '/home',
-    failureRedirect: '/login'
-  })
-);
-
-// Logout route
-app.get('/logout', (req, res, next) => {
-  req.logout(function(err) {
-    if (err) return next(err);
-    res.redirect('/login');
-  });
-});
-
-// Middleware to protect routes
-function checkAuthenticated(req, res, next) {
-  if (req.isAuthenticated()) {
-    return next();
-  }
-  res.redirect('/login');
-}
-
-app.get('/home', checkAuthenticated, (req, res) => {
-  res.render('home', { user: req.user });
-});
-
-// Other routers
-app.use('/dashboard', dashboardRoutes);
-app.use('/deal', dealRoutes);
-
-// Start server after DB connection
+// Start Server
 const startServer = async () => {
   try {
     await connectDB();
     app.listen(port, () => {
-      console.log(`Server running on http://localhost:${port}`);
+      console.log(`🚀 Server running at http://localhost:${port}`);
     });
   } catch (err) {
-    console.error('Error starting server:', err);
+    console.error('❌ Server failed to start:', err);
     process.exit(1);
   }
 };
