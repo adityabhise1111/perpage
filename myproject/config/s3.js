@@ -1,13 +1,14 @@
-// firebase/s3.js
-import AWS from 'aws-sdk';
+import { S3Client } from "@aws-sdk/client-s3";
+import dotenv from 'dotenv';
+dotenv.config();
 
-const bucketName = 'perpagedb';
+export const bucketName = 'perpagedb';
 
-const s3 = new AWS.S3({
-  accessKeyId: process.env.AWS_ACCESS_KEY,
-  secretAccessKey: process.env.AWS_SECRET_KEY,
-  region: process.env.AWS_REGION,
-  bucketName: process.env.AWS_BUCKET_NAME
+export const s3Client = new S3Client({
+  region: 'eu-north-1',
+  endpoint: 'https://s3.eu-north-1.amazonaws.com',
+  credentials: {
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+  }
 });
-
-export { s3, bucketName };
