@@ -30,9 +30,14 @@ export default function initialize(passport) {
     let user = await User.findOne({ googleId: profile.id });
     if (!user) {
       user = await User.create({
+        name: profile.displayName,
         googleId: profile.id,
-        email: profile.emails[0].value
-      });
+        email: profile.emails[0].value,
+        profilePic: profile.photos && profile.photos.length > 0 ? profile.photos[0].value : null
+      
+      },
+      { upsert: true, new: true }
+    );
     }
     return done(null, user);
   }));

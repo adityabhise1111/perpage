@@ -8,6 +8,8 @@ import MongoStore from 'connect-mongo';
 import passport from 'passport';
 import initialize from './config/passport-config.js';
 import connectDB from './config/db.js';
+import writerRoutes from './routes/writers.js';
+
 
 
 // Route imports
@@ -68,6 +70,7 @@ app.use('/', authRoutes);         // /login, /register, /auth/google, etc.
 app.use('/home', homeRoutes);     // /home (protected)
 app.use('/deal', dealRoutes);     // /deal (uploads, forms)
 app.use('/dashboard', dashboardRoutes); // /dashboard view
+app.use('/writers', writerRoutes); // /writers (writer-specific routes)
 
 // Default Route
 app.get('/', (req, res) => {
