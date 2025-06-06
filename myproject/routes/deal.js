@@ -100,4 +100,34 @@ router.post('/', checkAuthenticated, upload.single('file'), async (req, res) => 
   }
 });
 
+// Accept a deal
+router.post('/accept/:id', async (req, res) => {
+  try {
+    const deal = await Deal.findById(req.params.id);
+    if (!deal) return res.status(404).send('Deal not found');
+
+    deal.status = 'accepted';
+    await deal.save();
+    res.redirect('/dashboard');
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Error accepting deal');
+  }
+});
+
+// Reject a deal
+router.post('/reject/:id', async (req, res) => {
+  try {
+    const deal = await Deal.findById(req.params.id);
+    if (!deal) return res.status(404).send('Deal not found');
+
+    deal.status = 'rejected';
+    await deal.save();
+    res.redirect('/dashboard');
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Error rejecting deal');
+  }
+});
+
 export default router;

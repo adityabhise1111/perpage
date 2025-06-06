@@ -34,10 +34,29 @@
       color: #4ade80;
     }
 
+    .container {
+      padding: 40px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      font-size: 36px;
+      margin-bottom: 20px;
+      font-weight: 700;
+    }
+
+    h2 {
+      margin-top: 40px;
+      font-size: 28px;
+      border-bottom: 2px solid #4ade80;
+      padding-bottom: 10px;
+    }
+
     table {
       border-collapse: collapse;
       width: 100%;
-      margin-top: 40px;
+      margin-top: 20px;
       color: white;
     }
 
@@ -45,6 +64,7 @@
       padding: 12px 16px;
       border-bottom: 1px solid #444;
       text-align: left;
+      vertical-align: middle;
     }
 
     th {
@@ -63,26 +83,40 @@
       border-radius: 4px;
       cursor: pointer;
       font-weight: 600;
+      margin: 2px;
     }
 
     button:hover {
       background-color: #2563eb;
     }
 
+    .accept-btn {
+      background-color: #22c55e;
+    }
+
+    .accept-btn:hover {
+      background-color: #16a34a;
+    }
+
+    .reject-btn {
+      background-color: #ef4444;
+    }
+
+    .reject-btn:hover {
+      background-color: #dc2626;
+    }
+
+    img.profile-pic {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      object-fit: cover;
+      vertical-align: middle;
+      margin-right: 8px;
+    }
+
     .file-link {
       margin-bottom: 6px;
-    }
-
-    .container {
-      padding: 40px;
-      max-width: 1200px;
-      margin: 0 auto;
-    }
-
-    h1 {
-      font-size: 36px;
-      margin-bottom: 20px;
-      font-weight: 700;
     }
   </style>
 </head>
@@ -109,59 +143,91 @@
     </div>
   </nav>
 
-  <!-- Main Content -->
+  <!-- Main Dashboard -->
   <div class="container">
     <h1>Deals Dashboard</h1>
 
+    <!-- Section 1: Deals Assigned to Me (as Writer) -->
+    <h2>Deals Assigned to Me (as Writer)</h2>
     <table>
       <thead>
         <tr>
-          <th>Writer Profile</th>
-          <th></th>
+          <th>Client</th>
           <th>Pages</th>
-          <th>Total Price</th>
+          <th>Price</th>
           <th>Status</th>
-          <th>File(s)</th>
+          <th>Files</th>
           <th>Action</th>
         </tr>
       </thead>
       <tbody>
-        <% deals.forEach(deal => { %>
+        <% writerDeals.forEach(deal => { %>
           <tr>
-            <td><img src="<%= deal.writerId?.profilePic || 'N/A' %>" alt="<%= deal.writerId?.name || 'N/A' %>" style="width: 50px; height: 50px; border-radius: 50%;"></td>
-            <td><%= deal.writerId?.name || 'N/A' %></td>
+            <td><%= deal.userId?.name || 'N/A' %></td>
             <td><%= deal.pages %></td>
             <td>₹<%= deal.totalPrice %></td>
             <td><%= deal.status %></td>
-
             <td>
-              <% if (deal.signedLinks && deal.signedLinks.length > 0) { %>
+              <% if (deal.signedLinks?.length > 0) { %>
                 <% deal.signedLinks.forEach((link, idx) => { %>
-                  <div class="file-link">File <%= idx + 1 %></div>
+                  <a href="<%= link %>" target="_blank" download>
+                    <button>Download <%= idx + 1 %></button>
+                  </a>
                 <% }) %>
-              <% } else { %>
-                No files
-              <% } %>
+              <% } else { %> No files <% } %>
             </td>
-
             <td>
-              <% if (deal.signedLinks && deal.signedLinks.length > 0) { %>
-                <% deal.signedLinks.forEach((link, idx) => { %>
-                  <div class="file-link">
-                    <a href="<%= link %>" target="_blank" download>
-                      <button>Download <%= idx + 1 %></button>
-                    </a>
-                  </div>
-                <% }) %>
+              <% if (deal.status === 'pending') { %>
+                <form action="/deal/accept/<%= deal._id %>" method="POST" style="display:inline;">
+                  <button type="submit" class="accept-btn">Accept</button>
+                </form>
+                <form action="/deal/reject/<%= deal._id %>" method="POST" style="display:inline;">
+                  <button type="submit" class="reject-btn">Reject</button>
+                </form>
               <% } else { %>
-                -
+                <%= deal.status %>
               <% } %>
             </td>
           </tr>
         <% }) %>
       </tbody>
     </table>
-  </div>
 
+    <!-- Section 2: Deals Created by Me (as Client) -->
+    <h2>My Deals (as Client)</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Writer</th>
+          <th>Pages</th>
+          <th>Price</th>
+          <th>Status</th>
+          <th>Files</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% clientDeals.forEach(deal => { %>
+          <tr>
+            <td>
+              <img class="profile-pic" src="<%= deal.writerId?.profilePic || '/default.jpg' %>" alt="Writer">
+              <%= deal.writerId?.name || 'N/A' %>
+            </td>
+            <td><%= deal.pages %></td>
+            <td>₹<%= deal.totalPrice %></td>
+            <td><%= deal.status %></td>
+            <td>
+              <% if (deal.signedLinks?.length > 0) { %>
+                <% deal.signedLinks.forEach((link, idx) => { %>
+                  <a href="<%= link %>" target="_blank" download>
+                    <button>Download <%= idx + 1 %></button>
+                  </a>
+                <% }) %>
+              <% } else { %> No files <% } %>
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
 </body>
 </html>

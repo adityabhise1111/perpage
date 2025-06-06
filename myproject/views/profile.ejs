@@ -1,10 +1,144 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Profile - PerPage</title>
+  <title><%= writer.name %>'s Profile - PerPage</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #121212;
+      color: #fff;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 700px;
+      margin: auto;
+      background: #1e1e1e;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.05);
+    }
+
+    h1 {
+      text-align: center;
+    }
+
+    p {
+      font-size: 18px;
+    }
+
+    button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      background-color: #3b82f6;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    /* Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1;
+      left: 0; top: 0;
+      width: 100%; height: 100%;
+      overflow: auto;
+      background-color: rgba(0, 0, 0, 0.6);
+    }
+
+    .modal-content {
+      background-color: #1e1e1e;
+      margin: 10% auto;
+      padding: 20px;
+      border: 1px solid #888;
+      width: 90%;
+      max-width: 500px;
+      border-radius: 8px;
+    }
+
+    .close {
+      color: #aaa;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    input, textarea, select {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0 20px;
+      border: 1px solid #444;
+      border-radius: 5px;
+      background: #2c2c2c;
+      color: white;
+    }
+
+    label {
+      font-weight: bold;
+    }
+
+    .form-btn {
+      background-color: #4ade80;
+      color: #000;
+    }
+  </style>
 </head>
 <body>
-  <h1>This is the Profile Page</h1>
-  <p>User ID: <%= userId %></p>
+
+  <div class="container">
+    <div class="profile-header">
+      <img src="<%= writer.profilePic || '/images/default-profile.png' %>" alt="<%= writer.name %>'s Profile Picture">
+    <h1><%= writer.name %>'s Profile</h1>
+
+    <p><strong>Email:</strong> <%= writer.email %></p>
+    <p><strong>Role:</strong> <%= writer.role %></p>
+    <% if (writer.role === 'writer') { %>
+      <p><strong>Price Per Page:</strong> ₹<%= writer.pricePerPage %></p>
+      <p><strong>Bio:</strong> <%= writer.bio || 'No bio yet.' %></p>
+    <% } %>
+
+    <button onclick="document.getElementById('editModal').style.display='block'">Edit Profile</button>
+  </div>
+
+  <!-- Modal Form -->
+  <div id="editModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="document.getElementById('editModal').style.display='none'">&times;</span>
+      <h2>Edit Profile</h2>
+
+      <form action="/profile/<%= writer._id %>/edit" method="POST">
+        <label for="name">Name</label>
+        <input type="text" name="name" value="<%= writer.name %>" required>
+
+        <label for="pricePerPage">Price Per Page</label>
+        <input type="number" name="pricePerPage" value="<%= writer.pricePerPage %>">
+
+        <label for="bio">Bio</label>
+        <textarea name="bio" rows="4"><%= writer.bio || '' %></textarea>
+
+        <label for="role">Profile Type</label>
+        <select name="role">
+          <option value="writer" <%= writer.role === 'writer' ? 'selected' : '' %>>Writer</option>
+          <option value="user" <%= writer.role === 'user' ? 'selected' : '' %>>User</option>
+        </select>
+
+        <button type="submit" class="form-btn">Update</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // Close modal if clicked outside
+    window.onclick = function(event) {
+      const modal = document.getElementById('editModal');
+      if (event.target === modal) {
+        modal.style.display = "none";
+      }
+    };
+  </script>
 </body>
 </html>
