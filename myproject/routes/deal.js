@@ -1,11 +1,12 @@
 import express from 'express';
 import multer from 'multer';
+import mongoose from 'mongoose';
 import { s3Client, bucketName } from '../config/s3.js';
 import { PutObjectCommand } from "@aws-sdk/client-s3";
 import Deal from '../models/deal.js';
+import { User } from '../models/User.js';
 
 const router = express.Router();
-
 
 // Middleware to protect route
 function checkAuthenticated(req, res, next) {
@@ -19,9 +20,29 @@ const upload = multer({
   limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
 });
 
-// GET /deal
-router.get('/', checkAuthenticated, (req, res) => {
-  res.render('deal');
+// GET /deal?writerId=xxx
+router.get('/', checkAuthenticated, async (req, res) => {
+  try {
+    const writerId = req.query.writerId;
+
+    if (!writerId || !mongoose.Types.ObjectId.isValid(writerId)) {
+      return res.status(400).send("Invalid writer ID");
+    }
+
+    const writer = await User.findById(writerId);
+    if (!writer) return res.status(404).send("Writer not found");
+
+    res.render('deal', {
+      writerId: writer._id,
+      writerName: writer.name,
+      writerPrice: writer.pricePerPage,
+      userId: req.user._id, // from session
+      userName: req.user.name // optional for display
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Server error");
+  }
 });
 
 // POST /deal
@@ -42,8 +63,12 @@ router.post('/', checkAuthenticated, upload.single('file'), async (req, res) => 
       return res.status(400).send('No file uploaded');
     }
 
-    const fileKey = `uploads/${Date.now()}_${file.originalname}`;
+    // Validate writerId
+    const writer = await User.findById(writerId);
+    if (!writer) return res.status(400).send("Writer does not exist");
 
+    // Upload file to S3
+    const fileKey = `uploads/${Date.now()}_${file.originalname}`;
     const command = new PutObjectCommand({
       Bucket: bucketName,
       Key: fileKey,
@@ -53,22 +78,22 @@ router.post('/', checkAuthenticated, upload.single('file'), async (req, res) => 
 
     await s3Client.send(command);
 
-    const fileUrl = fileKey; // just save key for now
-
+    // Save deal
     const deal = new Deal({
-      userId,
-      writerId,
+      userId: new mongoose.Types.ObjectId(userId),
+      writerId: new mongoose.Types.ObjectId(writerId),
       pages,
       totalPrice,
       userNotes,
       writerNotes,
       status,
-      fileLinks: [fileUrl],
+      fileLinks: [fileKey],
       submissionFiles: []
     });
 
+
     await deal.save();
-    res.send('Deal created and file uploaded to S3!');
+    res.redirect('/dashboard');
   } catch (err) {
     console.error('Upload error:', err);
     res.status(500).send('Failed to create deal');

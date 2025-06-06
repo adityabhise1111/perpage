@@ -2,15 +2,17 @@ import mongoose from "mongoose";
 
 const dealSchema = new mongoose.Schema({
   userId: {
-    type: String,
+    type: mongoose.Schema.Types.ObjectId, // ✅ Fix this
+    ref: 'User',                         // ✅ Reference the User model
     required: true
   },
   writerId: {
-    type: String,
+    type: mongoose.Schema.Types.ObjectId, // ✅ Fix this
+    ref: 'User',                         // ✅ Reference the User model
     required: true
   },
   fileLinks: {
-    type: [String], // PDF/image URLs stored in Firebase or AWS
+    type: [String],
     default: []
   },
   status: {
@@ -35,7 +37,7 @@ const dealSchema = new mongoose.Schema({
     default: ''
   },
   submissionFiles: {
-    type: [String], // Writer submits finished work (again, stored externally)
+    type: [String],
     default: []
   },
   createdAt: {

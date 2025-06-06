@@ -12,11 +12,17 @@ function checkAuthenticated(req, res, next) {
   res.redirect('/login');
 }
 
-router.get('/',checkAuthenticated, async (req, res) => {
+router.get('/', checkAuthenticated, async (req, res) => {
   try {
-    const deals = await Deal.find().lean();
+    // Get logged-in user's ID
+    const userId = req.user._id || req.user.id;
 
-    // For each deal, replace file key with signed URL(s)
+    // Fetch deals belonging to this user
+    const deals = await Deal.find({ userId })
+    .populate('writerId', 'name profilePic') 
+    .lean();
+
+    // Generate signed URLs for each deal's file links
     for (const deal of deals) {
       if (deal.fileLinks && deal.fileLinks.length > 0) {
         deal.signedLinks = [];
@@ -27,7 +33,7 @@ router.get('/',checkAuthenticated, async (req, res) => {
             Key: key,
           });
 
-          const signedUrl = await getSignedUrl(s3Client, command, { expiresIn: 60 * 5 }); // 5 min
+          const signedUrl = await getSignedUrl(s3Client, command, { expiresIn: 60 * 5 }); // 5 minutes expiry
           deal.signedLinks.push(signedUrl);
         }
       } else {
@@ -35,6 +41,7 @@ router.get('/',checkAuthenticated, async (req, res) => {
       }
     }
 
+    // Render dashboard view with user's deals and their signed file URLs
     res.render('dashboard', { deals });
   } catch (err) {
     console.error('Dashboard error:', err);

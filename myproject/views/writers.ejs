@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <title>Writers - PerPage</title>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
       margin: 0;
@@ -71,6 +71,16 @@
       border-radius: 50%;
       border: 2px solid white;
     }
+
+    a.name-link {
+      color: #3b82f6;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    a.name-link:hover {
+      text-decoration: underline;
+    }
   </style>
 </head>
 <body>
@@ -84,7 +94,7 @@
           <polyline points="14,2 14,8 20,8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></polyline>
         </svg>
       </div>
-      <span style="font-size: 26px; font-weight: 700; letter-spacing: -0.5px;">PerPage</span>
+      <span style="font-size: 26px; font-weight: 700;">PerPage</span>
     </div>
 
     <div>
@@ -115,13 +125,15 @@
         <% writers.forEach(writer => { %>
           <tr>
             <td>
-              <% if(writer.profilePic) { %>
+              <% if (writer.profilePic) { %>
                 <img src="<%= writer.profilePic %>" alt="Profile Picture">
               <% } else { %>
                 <span style="color: #888;">No Image</span>
               <% } %>
             </td>
-            <td><%= writer.name %></td>
+            <td>
+              <a href="/writers/<%= writer._id %>" class="name-link"><%= writer.name %></a>
+            </td>
             <td><%= writer.pricePerPage %></td>
           </tr>
         <% }) %>
