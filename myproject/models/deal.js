@@ -15,6 +15,7 @@ const dealSchema = new mongoose.Schema({
     type: [String],
     default: []
   },
+  finalFileLink: String,
   status: {
     type: String,
     enum: ['pending', 'accepted', 'in-progress', 'submitted', 'completed', 'rejected'],
