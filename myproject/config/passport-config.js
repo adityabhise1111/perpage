@@ -3,6 +3,8 @@ import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 import { User } from '../models/User.js';
 import bcrypt from 'bcryptjs';
 import dotenv from 'dotenv';
+import {Strategy as GitHubStrategy} from 'passport-github2';
+
 
 dotenv.config();
 
@@ -25,7 +27,7 @@ export default function initialize(passport) {
   passport.use(new GoogleStrategy({
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    callbackURL: process.env.GOOGLE_CALLBACK_URL,
+    callbackURL: "/auth/google/callback",
   }, async (accessToken, refreshToken, profile, done) => {
     let user = await User.findOne({ googleId: profile.id });
     if (!user) {
@@ -51,3 +53,37 @@ export default function initialize(passport) {
     done(null, user);
   });
 }
+
+
+
+
+// git  strategy
+passport.use(new GitHubStrategy({
+  clientID: process.env.GITHUB_CLIENT_ID,
+  clientSecret: process.env.GITHUB_CLIENT_SECRET,
+  callbackURL: "/auth/github/callback"
+},
+async (accessToken, refreshToken, profile, done) => {
+  try {
+    const email = profile.emails?.[0]?.value || `${profile.username}@github.com`; // fallback
+    let user = await User.findOne({ githubId: profile.id });
+    if (user) {
+      return done(null, user);
+    }
+    user = await User.findOne({ email });
+    if (user) {
+      user.githubId = profile.id;
+      await user.save();
+      return done(null, user);
+    }
+    const newUser = new User({
+      username: profile.username,
+      email,
+      githubId: profile.id
+    });
+    await newUser.save();
+    return done(null, newUser);
+  } catch (err) {
+    return done(err, null);
+  }
+}));
