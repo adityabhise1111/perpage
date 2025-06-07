@@ -1,9 +1,36 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
-  <title>Register - PerPage</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Register</title>
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-  <h1>This is the Register Page</h1>
+
+<body class="bg-gray-100 flex items-center justify-center min-h-screen px-4">
+  <div class="bg-white p-8 rounded-xl shadow-xl w-full max-w-md sm:max-w-lg md:max-w-md lg:max-w-sm">
+    <h1 class="text-4xl font-extrabold text-center text-gray-900 mb-8 tracking-tight">Register</h1>
+
+    <!-- Registration Form -->
+    <form action="/register" method="POST">
+      <input type="text" name="name" placeholder="Full Name" required><br>
+      <input type="email" name="email" placeholder="Email" required><br>
+      <input type="password" name="password" placeholder="Password" required><br>
+      <input type="text" name="address" placeholder="Address"><br>
+      <input type="text" name="role" placeholder="Role (e.g., user/writer)"><br>
+      <textarea name="bio" placeholder="Bio"></textarea><br>
+      <button type="submit">Register</button>
+    </form>
+
+
+    <!-- Login Redirect -->
+    <div class="text-center mt-6">
+      <a href="/login"
+        class="text-sm text-blue-600 hover:underline focus:outline-none focus:ring-2 focus:ring-blue-400 rounded">Already
+        have an account? Login here</a>
+    </div>
+  </div>
 </body>
+
 </html>

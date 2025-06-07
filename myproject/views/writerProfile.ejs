@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title><%= writer.name %> - Profile</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #000000 0%, #1a1a1a 50%, #2d2d2d 100%);
+      color: white;
+      min-height: 100vh;
+    }
+
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 40px;
+      background: #0a0a0a;
+      border-bottom: 1px solid rgba(40, 40, 40, 0.3);
+    }
+
+    nav a {
+      color: #ffffff;
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 16px;
+      margin-right: 24px;
+    }
+
+    nav a:hover {
+      text-decoration: underline;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 40px auto;
+      background: rgba(40, 40, 40, 0.7);
+      border-radius: 10px;
+      padding: 2rem;
+      box-shadow: 0 0 30px rgba(0, 0, 0, 0.4);
+    }
+
+    .profile-header {
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .profile-header img {
+      width: 160px;
+      height: 160px;
+      object-fit: cover;
+      border-radius: 50%;
+      border: 3px solid #3b82f6;
+      background: #2d2d2d;
+    }
+
+    .profile-header h1 {
+      font-size: 2.5rem;
+      margin: 0;
+      color: white;
+    }
+
+    .profile-info p {
+      font-size: 1.2rem;
+      margin: 0.6rem 0;
+      line-height: 1.6;
+    }
+
+    .label {
+      font-weight: 600;
+      color: #cbd5e1;
+    }
+
+    .rating {
+      color: #f5a623;
+      font-size: 1.3rem;
+    }
+
+    .reviews {
+      color: #999;
+      font-size: 1rem;
+    }
+
+    .apply-btn {
+      margin-top: 2rem;
+      padding: 14px 32px;
+      font-size: 1rem;
+      background: white;
+      color: black;
+      border: none;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .apply-btn:hover {
+      background-color: #e2e2e2;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav>
+    <div style="display: flex; align-items: center; gap: 12px;">
+      <div style="width: 40px; height: 40px; background: white; border-radius: 6px; display: flex; align-items: center; justify-content: center;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" style="color: #0a0a0a;">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+          <polyline points="14,2 14,8 20,8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></polyline>
+        </svg>
+      </div>
+      <span style="font-size: 26px; font-weight: 700; letter-spacing: -0.5px; color: white;">PerPage</span>
+    </div>
+
+    <div style="display: flex; gap: 40px;">
+      <a href="/">Home</a>
+      <a href="/writers">Writers</a>
+      <a href="/about">About</a>
+      <a href="/contact">Contact</a>
+    </div>
+  </nav>
+
+  <!-- Profile Content -->
+  <div class="container">
+    <div class="profile-header">
+      <img src="<%= writer.profilePic || '/default-profile.png' %>" alt="Profile Picture of <%= writer.name %>" />
+      <h1><%= writer.name %></h1>
+    </div>
+
+    <div class="profile-info">
+      <p><span class="label">Bio:</span> <%= writer.bio || 'This writer has not added a bio yet.' %></p>
+      <p><span class="label">Price per page:</span> ₹<%= writer.pricePerPage %></p>
+      <p class="rating">★★★★☆</p>
+      <p class="reviews">10 reviews</p>
+    </div>
+    <a href="/deal?writerId=<%= writer._id %>" class="apply-button">Apply</a>
+
+    <form action="/deal?writerId=<%= writer._id %>" method="GET">
+      <input type="hidden" name="writerId" value="<%= writer._id %>" />
+      <button type="submit" class="apply-btn">Apply</button>
+    </form>
+  </div> 
+
+</body>
+</html>

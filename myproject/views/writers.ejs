@@ -1,9 +1,146 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <title>Writers - PerPage</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #000000 0%, #1a1a1a 50%, #2d2d2d 100%);
+      color: white;
+      min-height: 100vh;
+    }
+
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 40px;
+      background: #0a0a0a;
+      border-bottom: 1px solid rgba(40, 40, 40, 0.3);
+    }
+
+    nav a {
+      color: #ffffff;
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 16px;
+      margin: 0 20px;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+
+    h1 {
+      font-size: 36px;
+      font-weight: 700;
+      margin-bottom: 30px;
+      text-align: center;
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      background-color: rgba(255, 255, 255, 0.05);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    th, td {
+      padding: 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      text-align: left;
+      color: #e2e8f0;
+    }
+
+    th {
+      background-color: rgba(255, 255, 255, 0.1);
+      font-size: 16px;
+      color: #94a3b8;
+    }
+
+    img {
+      width: 50px;
+      height: 50px;
+      object-fit: cover;
+      border-radius: 50%;
+      border: 2px solid white;
+    }
+
+    a.name-link {
+      color: #3b82f6;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    a.name-link:hover {
+      text-decoration: underline;
+    }
+  </style>
 </head>
 <body>
-  <h1>This is the Writers Listing Page</h1>
+
+  <!-- Navigation -->
+  <nav>
+    <div style="display: flex; align-items: center; gap: 12px;">
+      <div style="width: 40px; height: 40px; background: white; border-radius: 6px; display: flex; align-items: center; justify-content: center;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" style="color: #0a0a0a;">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+          <polyline points="14,2 14,8 20,8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></polyline>
+        </svg>
+      </div>
+      <span style="font-size: 26px; font-weight: 700;">PerPage</span>
+    </div>
+
+    <div>
+      <a href="/">Home</a>
+      <a href="/writers">Writers</a>
+      <a href="/about">About</a>
+      <a href="/contact">Contact</a>
+      <a href="/dashboard">Dashboard</a>
+    </div>
+
+    <div>
+      <a href="/login" style="margin-right: 10px;">Login</a>
+      <a href="/register" style="background: white; color: #0a0a0a; padding: 10px 20px; border-radius: 6px; font-weight: 600;">Get Started</a>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <div class="container">
+    <h1>Available Writers</h1>
+    <table>
+      <thead>
+        <tr>
+          <th>Profile</th>
+          <th>Name</th>
+          <th>Price / Page (₹)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% writers.forEach(writer => { %>
+          <tr>
+            <td>
+              <% if (writer.profilePic) { %>
+                <img src="<%= writer.profilePic %>" alt="Profile Picture">
+              <% } else { %>
+                <span style="color: #888;">No Image</span>
+              <% } %>
+            </td>
+            <td>
+              <a href="/writers/<%= writer._id %>" class="name-link"><%= writer.name %></a>
+            </td>
+            <td><%= writer.pricePerPage %></td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+
 </body>
 </html>
