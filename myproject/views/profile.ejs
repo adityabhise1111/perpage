@@ -102,6 +102,15 @@
     <% } %>
 
     <button onclick="document.getElementById('editModal').style.display='block'">Edit Profile</button>
+    <form action="/logout" method="GET">
+      <button
+        type="submit"
+        class="w-full bg-red-600 text-white py-3 rounded-lg font-semibold hover:bg-red-700 focus:outline-none focus:ring-4 focus:ring-red-400 shadow-md transition duration-300 ease-in-out"
+        aria-label="Logout"
+      >
+        Logout
+      </button>
+    </form>
   </div>
 
   <!-- Modal Form -->
