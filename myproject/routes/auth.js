@@ -6,6 +6,13 @@ import { User } from '../models/User.js';
 
 const router = express.Router();
 
+
+// 🔒 Middleware to ensure user is Not authenticated
+function checkNotAuthenticated(req, res, next) {
+  if (!req.isAuthenticated()) return next();
+  res.redirect('/home');
+}
+
 // Register Page
 router.get('/register', (req, res) => {
   res.render('register');
@@ -37,7 +44,7 @@ router.post('/register',
 );
 
 // Login Page
-router.get('/login', (req, res) => {
+router.get('/login', checkNotAuthenticated, (req, res) => {
   res.render('login-improved');
 });
 
