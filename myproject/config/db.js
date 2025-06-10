@@ -1,13 +1,15 @@
 import mongoose from 'mongoose';
-
-const connectDB = async () => {
+import {expressError} from '../utils/expressErrors.js';
+import {asyncWrap} from '../utils/wrapAsync.js';
+const connectDB = asyncWrap(async () => {
   try {
-    const conn = await mongoose.connect(process.env.MONGO_URI);
+    console.log(process.env.MONGO_URL);
+    const conn = await mongoose.connect(process.env.MONGO_URL);
     console.log(`MongoDB Connected: ${conn.connection.host}`);
   } catch (error) {
-    console.error('MongoDB connection failed:', error);
-    process.exit(1);
+    throw new expressError('mongodb connection failed' , 500);
   }
-};
+});
 
 export default connectDB;
+ 

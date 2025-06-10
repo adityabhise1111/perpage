@@ -70,7 +70,7 @@ app.use(passport.session());
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Route Mounting
-app.use('/', authRoutes);         // /login, /register, /auth/google, etc.
+app.use('/', authRoutes);         // /login, /register, /auth/google,  /auth/github etc.
 app.use('/home', homeRoutes);     // /home (protected)
 app.use('/deal', dealRoutes);     // /deal (uploads, forms)
 app.use('/dashboard', dashboardRoutes); // /dashboard view
@@ -84,6 +84,7 @@ app.use(methodOverride('_method'));
 app.get('/', (req, res) => {
   res.redirect('/home');
 });
+
 
 // Start Server
 const startServer = async () => {

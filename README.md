@@ -1,0 +1,1 @@
+PerPage.com is a professional and minimalistic assignment marketplace that connects customers with skilled writers while ensuring complete anonymity. Customers can securely post assignment orders, and registered writers can accept and complete them through a streamlined dashboard. The platform supports secure payments, ratings, and admin control to maintain quality and trust.
