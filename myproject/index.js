@@ -70,7 +70,7 @@ app.use(passport.session());
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Route Mounting
-app.use('/', authRoutes);         // /login, /register, /auth/google,  /auth/github etc.
+app.use('/', authRoutes);         // /login, /register, /auth/google, etc.
 app.use('/home', homeRoutes);     // /home (protected)
 app.use('/deal', dealRoutes);     // /deal (uploads, forms)
 app.use('/dashboard', dashboardRoutes); // /dashboard view
@@ -85,7 +85,6 @@ app.get('/', (req, res) => {
   res.redirect('/home');
 });
 
-
 // Start Server
 const startServer = async () => {
   try {
@@ -98,5 +97,11 @@ const startServer = async () => {
     process.exit(1);
   }
 };
+
+
+app.get('/api/test', (req, res) => {
+  res.send('Hello from Express!');
+});
+
 
 startServer();
