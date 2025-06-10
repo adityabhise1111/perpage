@@ -4,7 +4,8 @@ import { User } from '../models/User.js';
 import bcrypt from 'bcryptjs';
 import dotenv from 'dotenv';
 import {Strategy as GitHubStrategy} from 'passport-github2';
-
+import {expressError} from '../utils/expressErrors.js';
+import {asyncWrap} from '../utils/wrapAsync.js'
 
 dotenv.config();
 
@@ -13,6 +14,7 @@ export default function initialize(passport) {
   passport.use(new LocalStrategy(
     { usernameField: 'email' },
     async (email, password, done) => {
+      try {
       const user = await User.findOne({ email });
       if (!user) return done(null, false, { message: 'No user with that email' });
 
@@ -20,6 +22,10 @@ export default function initialize(passport) {
       if (!match) return done(null, false, { message: 'Incorrect password' });
 
       return done(null, user);
+    }catch{
+      return done(new expressError("something went wrong", 500));
+    }
+  
     }
   ));
 
@@ -52,7 +58,7 @@ export default function initialize(passport) {
     const user = await User.findById(id);
     done(null, user);
   });
-}
+
 
 
 
@@ -87,3 +93,4 @@ async (accessToken, refreshToken, profile, done) => {
     return done(err, null);
   }
 }));
+}

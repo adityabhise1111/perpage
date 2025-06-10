@@ -55,6 +55,16 @@ router.get('/auth/google/callback', passport.authenticate('google', {
   failureRedirect: '/login'
 }));
 
+
+//git auth
+router.get('/auth/github', passport.authenticate('github', { scope: ['profile','email'] }));
+router.get('/auth/github/callback',
+  passport.authenticate('github', { failureRedirect: '/login', failureFlash: true }),
+  (req, res) => {
+    
+    res.redirect('/home');
+});
+
 // Logout
 router.get('/logout', (req, res, next) => {
   req.logout(function (err) {
