@@ -29,45 +29,41 @@ export default function initialize(passport) {
     }
   ));
 
-  // Google strategy
-  passport.use(new GoogleStrategy({
-    clientID: process.env.GOOGLE_CLIENT_ID,
-    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    callbackURL: "/auth/google/callback",
+
+// Google strategy
+passport.use(new GoogleStrategy({
+  clientID: process.env.GOOGLE_CLIENT_ID,
+  clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+  callbackURL: "/auth/google/callback",
   }, async (accessToken, refreshToken, profile, done) => {
-    let user = await User.findOne({ googleId: profile.id });
-    if (!user) {
-      user = await User.create({
-        name: profile.displayName,
-        googleId: profile.id,
-        email: profile.emails[0].value,
-        profilePic: profile.photos && profile.photos.length > 0 ? profile.photos[0].value : null
-      
-      },
-      { upsert: true, new: true }
-    );
-    }
-    return done(null, user);
+  let user = await User.findOne({ googleId: profile.id });
+  if (!user) {
+    user = await User.create({
+      name: profile.displayName,
+      googleId: profile.id,
+      email: profile.emails[0].value,
+      profilePic: profile.photos && profile.photos.length > 0 ? profile.photos[0].value : null
+    
+    },
+    { upsert: true, new: true }
+  );
+  }
+  return done(null, user);
   }));
-
   passport.serializeUser((user, done) => {
-    done(null, user.id);
+  done(null, user.id);
   });
-
   passport.deserializeUser(async (id, done) => {
-    const user = await User.findById(id);
-    done(null, user);
+  const user = await User.findById(id);
+  done(null, user);
   });
-
-
-
 
 
 // git  strategy
 passport.use(new GitHubStrategy({
   clientID: process.env.GITHUB_CLIENT_ID,
   clientSecret: process.env.GITHUB_CLIENT_SECRET,
-  callbackURL: "/auth/github/callback"
+  callbackURL: process.env.GITHUB_CALLBACK_URL,
 },
 async (accessToken, refreshToken, profile, done) => {
   try {
