@@ -33,6 +33,7 @@
     "passport-google-oauth20": "^2.0.0",
     "passport-local": "^1.0.0",
     "path": "^0.12.7",
+    "razorpay": "^2.9.6",
     "routes": "^2.1.0"
   },
   "devDependencies": {

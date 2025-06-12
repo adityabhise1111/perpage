@@ -8,19 +8,20 @@ import MongoStore from 'connect-mongo';
 import passport from 'passport';
 import initialize from './config/passport-config.js';
 import connectDB from './config/db.js';
-import writerRoutes from './routes/writers.js';
 import methodOverride from 'method-override';
-
+import Razorpay from "razorpay"; 
 
 
 
 
 // Route imports
 import profile from './routes/profile.js';
+import writerRoutes from './routes/writers.js';
 import authRoutes from './routes/auth.js';
 import homeRoutes from './routes/home.js';
 import dealRoutes from './routes/deal.js';
 import dashboardRoutes from './routes/dashboard.js';
+import payment from './routes/payment.js';
 
 dotenv.config();
 
@@ -76,7 +77,7 @@ app.use('/deal', dealRoutes);     // /deal (uploads, forms)
 app.use('/dashboard', dashboardRoutes); // /dashboard view
 app.use('/writers', writerRoutes); // /writers (writer-specific routes)
 app.use('/profile', profile);      // /profile/:id (writer profile)
-
+app.use('/payment', payment);
 // For PUT and DELETE methods in forms
 app.use(methodOverride('_method')); 
 
@@ -102,6 +103,14 @@ const startServer = async () => {
 app.get('/api/test', (req, res) => {
   res.send('Hello from Express!');
 });
+
+
+app.get("/pay", (req, res) => {
+  res.render("pay", {
+    key_id: process.env.RAZORPAY_KEY_ID
+  });
+});
+
 
 
 startServer();
