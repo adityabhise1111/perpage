@@ -1,0 +1,685 @@
+<%
+// Default user data in case not provided by server
+const defaultUser = {
+  name: "Kapil Kor",
+  email: "kapil@example.com",
+  mobile: "+91-XXXXXXXXXX",
+  role: "Writer",
+  pricePerPage: "₹5",
+  bio: "Passionate content creator specializing in high-quality writing and storytelling",
+  review: "Great work!",
+  tasksCompleted: 6,
+  totalTasks: 10,
+  rating: 4.5,
+  profileImage: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=400&h=400"
+};
+
+// Use provided user data or default - check for both 'user' and 'writer' variables
+const userData = typeof writer !== 'undefined' ? writer : (typeof user !== 'undefined' ? user : defaultUser);
+%>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+    <title>Profile Card - <%= userData.name %></title>
+    
+    <!-- External Dependencies -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    
+    <!-- Custom Styles -->
+    <style>
+        /* Background and Layout */
+        .gradient-bg {
+            background: linear-gradient(135deg, #000000 0%, #1a1a1a 50%, #2d2d2d 100%);
+            min-height: 100vh;
+        }
+        
+        /* Card Styling */
+        .card-shadow {
+            background: #0a0a0a;
+            border: 1px solid #2d2d2d;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+            transition: all 0.3s ease;
+        }
+        
+        .card-shadow:hover {
+            box-shadow: 0 24px 48px rgba(0, 0, 0, 0.8);
+        }
+        
+        /* Profile Header */
+        .profile-gradient {
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            position: relative;
+        }
+        
+        .profile-gradient::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            opacity: 0.7;
+        }
+        
+        /* Star Rating */
+        .star-filled {
+            color: #fbbf24;
+            fill: #fbbf24;
+        }
+        
+        .star-empty {
+            color: #4b5563;
+        }
+        
+        /* Progress Bar */
+        .progress-bar {
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            border-radius: 9999px;
+            height: 12px;
+            transition: width 0.3s ease;
+        }
+        
+        /* Button Styling */
+        .btn-gradient {
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            transition: all 0.3s ease;
+        }
+        
+        .btn-gradient:hover {
+            background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
+            transform: translateY(-2px);
+        }
+        
+        /* Stats Section */
+        .stats-gradient {
+            background: #1a1a1a;
+            border: 1px solid #2d2d2d;
+        }
+        
+        /* Contact Cards */
+        .contact-card {
+            background: #1a1a1a;
+            border: 1px solid #2d2d2d;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .contact-card:hover {
+            background: #2d2d2d;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+        }
+        
+        /* Modal Styles */
+        .modal {
+            backdrop-filter: blur(4px);
+        }
+        
+        .modal-content {
+            animation: modalSlideIn 0.3s ease-out;
+        }
+        
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9) translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+        
+        /* Form Input Styles */
+        .modal input:focus,
+        .modal textarea:focus,
+        .modal select:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px #3b82f6;
+            border-color: transparent;
+        }
+        
+        /* Animations */
+        .fade-in {
+            animation: fadeIn 0.8s ease-in-out;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .scale-hover {
+            transition: transform 0.3s ease;
+        }
+        
+        .scale-hover:hover {
+            transform: scale(1.02);
+        }
+        
+        .pulse-animation {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        
+        /* Profile Image */
+        .profile-image {
+            transition: transform 0.3s ease;
+        }
+        
+        .profile-image:hover {
+            transform: scale(1.05);
+        }
+        
+        /* Tooltip */
+        .tooltip {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #10b981;
+            color: white;
+            padding: 12px 16px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .card-shadow {
+                margin: 1rem;
+            }
+            
+            .profile-section {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .profile-image {
+                align-self: center;
+                margin-bottom: 1rem;
+            }
+        }
+        
+        /* Accessibility */
+        .contact-card:focus {
+            outline: 2px solid #3b82f6;
+            outline-offset: 2px;
+        }
+    </style>
+</head>
+<body class="gradient-bg">
+
+   
+    <nav style="display: flex; justify-content: space-between; align-items: center; padding: 15px 40px; background: #0a0a0a; border-bottom: 1px solid rgba(40, 40, 40, 0.3);">
+        <div style="display: flex; align-items: center; gap: 12px;">
+            <div style="width: 40px; height: 40px; background: white; border-radius: 6px; display: flex; align-items: center; justify-content: center;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" style="color: #0a0a0a;">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                    <polyline points="14,2 14,8 20,8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></polyline>
+                </svg>
+            </div>
+            <span style="font-size: 26px; font-weight: 700; letter-spacing: -0.5px; color: white;">PerPage</span>
+        </div>
+        
+        <div style="display: flex; gap: 40px;">
+            <a href="/" style="color: #ffffff; text-decoration: none; font-weight: 500; font-size: 16px;">Home</a>
+            <a href="/writers" style="color: #ffffff; text-decoration: none; font-weight: 500; font-size: 16px;">Writers</a>
+            <a href="/about" style="color: #ffffff; text-decoration: none; font-weight: 500; font-size: 16px;">About</a>
+            <a href="/contact" style="color: #ffffff; text-decoration: none; font-weight: 500; font-size: 16px;">Contact</a>
+            <% if (typeof user !== 'undefined' && user) { %>
+            <a href="/dashboard" style="color: #ffffff; text-decoration: none; font-weight: 500; font-size: 16px;">Dashboard</a>
+            <a href="/profile/<%= user._id %>" style="color: #ffffff; text-decoration: none; font-weight: 500; font-size: 16px;">Profile</a>
+            <% } %>
+        </div>
+        
+        <div style="display: flex; gap: 12px; align-items: center;">
+            <% if (typeof user !== 'undefined' && user) { %>
+            <span style="color: #ffffff; padding: 8px 16px; font-weight: 500; font-size: 16px;">Welcome, <%= user.name || user.username || 'User' %></span>
+            <a href="/logout" style="color: #888888; text-decoration: none; padding: 8px 16px; font-weight: 500; font-size: 16px;">Logout</a>
+            <% } else { %>
+            <a href="/login" style="color: #888888; text-decoration: none; padding: 8px 16px; font-weight: 500; font-size: 16px;">Login</a>
+            <a href="/register" style="background: white; color: #0a0a0a; padding: 12px 24px; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 16px;">Get Started</a>
+            <% } %>
+            <button style="background: rgba(40, 40, 40, 0.5); border: 1px solid rgba(80, 80, 80, 0.5); color: #cccccc; padding: 8px; border-radius: 6px; cursor: pointer; font-size: 18px; margin-left: 8px;">
+                🌙
+            </button>
+        </div>
+    </nav>
+
+    <!-- Profile Card Container -->
+    <div style="display: flex; align-items: center; justify-content: center; padding: 40px; min-height: calc(100vh - 80px);">
+        
+        <!-- Profile Card -->
+        <div class="w-full max-w-2xl card-shadow rounded-2xl overflow-hidden scale-hover fade-in">
+            <!-- Header Section -->
+            <div class="h-32 profile-gradient relative">
+                <div class="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-600 opacity-70"></div>
+                <!-- Decorative Elements -->
+                <div class="absolute top-4 right-4 w-16 h-16 rounded-full bg-white opacity-10"></div>
+                <div class="absolute bottom-4 left-4 w-8 h-8 rounded-full bg-white opacity-20"></div>
+                <div class="absolute top-8 left-8 w-4 h-4 rounded-full bg-white opacity-30"></div>
+            </div>
+            
+            <!-- Profile Content -->
+            <div class="relative px-8 pb-8">
+                <!-- Profile Section -->
+                <div class="flex items-start space-x-6 -mt-16 mb-8 profile-section">
+                    <!-- Profile Picture -->
+                    <div class="flex-shrink-0">
+                        <img 
+                            id="profileImage"
+                            src="<%= userData.profileImage %>"
+                            alt="<%= userData.name %> Profile Picture"
+                            class="w-28 h-28 rounded-full border-4 border-gray-800 shadow-lg object-cover profile-image"
+                            onerror="this.src='https://via.placeholder.com/112x112/2d2d2d/ffffff?text=<%= userData.name.charAt(0) %>'"
+                        />
+                    </div>
+                    
+                    <!-- User Information -->
+                    <div class="flex-1 mt-4">
+                        <h1 class="text-3xl font-bold text-white mb-2"><%= userData.name %></h1>
+                        <div class="flex items-center space-x-4 mb-3">
+                            <p class="text-xl text-gray-300 font-medium"><%= userData.role %></p>
+                            <div class="flex items-center space-x-1">
+                                <div id="starRating" class="flex items-center space-x-1">
+                                    <!-- Stars populated by JavaScript -->
+                                </div>
+                                <span class="text-sm text-gray-400 ml-1">(<%= userData.rating %>)</span>
+                            </div>
+                        </div>
+                        <p class="text-sm text-gray-300 leading-relaxed"><%= userData.bio %></p>
+                    </div>
+                </div>
+                
+                <!-- Contact Information Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <div class="space-y-4">
+                        <!-- Email Card -->
+                        <div class="contact-card rounded-lg p-4" 
+                             onclick="copyToClipboard('<%= userData.email %>', 'Email')"
+                             tabindex="0"
+                             role="button"
+                             aria-label="Copy email address">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-10 h-10 bg-blue-900/50 rounded-full flex items-center justify-center">
+                                    <i data-lucide="mail" class="w-5 h-5 text-blue-400"></i>
+                                </div>
+                                <div>
+                                    <span class="text-xs text-gray-400 uppercase tracking-wide">Email</span>
+                                    <p class="text-sm font-medium text-white"><%= userData.email %></p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Mobile Card -->
+                        <div class="contact-card rounded-lg p-4"
+                             onclick="copyToClipboard('<%= userData.mobile %>', 'Mobile')"
+                             tabindex="0"
+                             role="button"
+                             aria-label="Copy mobile number">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-10 h-10 bg-green-900/50 rounded-full flex items-center justify-center">
+                                    <i data-lucide="phone" class="w-5 h-5 text-green-400"></i>
+                                </div>
+                                <div>
+                                    <span class="text-xs text-gray-400 uppercase tracking-wide">Mobile</span>
+                                    <p class="text-sm font-medium text-white"><%= userData.mobile %></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <!-- Price Card -->
+                        <div class="contact-card rounded-lg p-4"
+                             onclick="copyToClipboard('<%= userData.pricePerPage %>', 'Price')"
+                             tabindex="0"
+                             role="button"
+                             aria-label="Copy price per page">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-10 h-10 bg-orange-900/50 rounded-full flex items-center justify-center">
+                                    <i data-lucide="indian-rupee" class="w-5 h-5 text-orange-400"></i>
+                                </div>
+                                <div>
+                                    <span class="text-xs text-gray-400 uppercase tracking-wide">Price Per Page</span>
+                                    <p class="text-sm font-medium text-white"><%= userData.pricePerPage %></p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Review Card -->
+                        <div class="contact-card rounded-lg p-4"
+                             onclick="copyToClipboard('<%= userData.review %>', 'Review')"
+                             tabindex="0"
+                             role="button"
+                             aria-label="Copy latest review">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-10 h-10 bg-purple-900/50 rounded-full flex items-center justify-center">
+                                    <i data-lucide="quote" class="w-5 h-5 text-purple-400"></i>
+                                </div>
+                                <div>
+                                    <span class="text-xs text-gray-400 uppercase tracking-wide">Latest Review</span>
+                                    <p class="text-sm font-medium text-white">"<%= userData.review %>"</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Statistics Section -->
+                <div class="stats-gradient rounded-xl p-6 mb-8">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-4">
+                            <div class="text-center">
+                                <div class="text-2xl font-bold text-blue-400"><%= userData.tasksCompleted %></div>
+                                <div class="text-xs text-gray-400 uppercase tracking-wide">Completed</div>
+                            </div>
+                            <div class="w-px h-8 bg-gray-600"></div>
+                            <div class="text-center">
+                                <div class="text-2xl font-bold text-purple-400"><%= userData.totalTasks %></div>
+                                <div class="text-xs text-gray-400 uppercase tracking-wide">Total Tasks</div>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-lg font-semibold text-white">Progress</div>
+                            <div class="mt-2">
+                                <div class="w-32 bg-gray-700 rounded-full h-3">
+                                    <div class="progress-bar" style="width: <%= Math.round((userData.tasksCompleted / userData.totalTasks) * 100) %>%"></div>
+                                </div>
+                                <div class="text-xs text-gray-400 mt-1"><%= Math.round((userData.tasksCompleted / userData.totalTasks) * 100) %>% Complete</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Action Button -->
+                <div class="mt-8">
+                    <button 
+                        class="w-full btn-gradient hover:shadow-lg text-white font-semibold py-3 px-6 rounded-xl shadow-md transform transition-all duration-200"
+                        onclick="editProfile()"
+                        aria-label="Edit profile information"
+                    >
+                        <i data-lucide="edit" class="w-4 h-4 mr-2 inline"></i>
+                        Edit Profile
+                    </button>
+                </div>
+                
+                <!-- Footer -->
+                <div class="mt-6 text-center">
+                    <p class="text-xs text-gray-500">
+                        PerPage Profile • <%= new Date().getFullYear() %>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Profile Modal -->
+    <div id="editModal" class="modal fixed inset-0 bg-black bg-opacity-60 hidden z-50 flex items-center justify-center">
+        <div class="modal-content bg-gray-900 border border-gray-700 rounded-xl p-8 max-w-md w-full mx-4 transform transition-all duration-300 scale-95 opacity-0">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold text-white">Edit Profile</h2>
+                <button 
+                    type="button" 
+                    class="close text-gray-400 hover:text-white text-3xl font-bold cursor-pointer transition-colors"
+                    onclick="closeModal()"
+                >
+                    &times;
+                </button>
+            </div>
+
+            <form action="/profile/<%= userData._id %>/edit" method="POST" class="space-y-4">
+                <div>
+                    <label for="name" class="block text-sm font-medium text-gray-300 mb-2">Name</label>
+                    <input 
+                        type="text" 
+                        name="name" 
+                        id="name"
+                        value="<%= userData.name %>" 
+                        required
+                        class="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                    >
+                </div>
+
+                <% if (userData.role === 'writer' || userData.role === 'Writer') { %>
+                <div>
+                    <label for="pricePerPage" class="block text-sm font-medium text-gray-300 mb-2">Price Per Page</label>
+                    <input 
+                        type="number" 
+                        name="pricePerPage" 
+                        id="pricePerPage"
+                        value="<%= userData.pricePerPage ? userData.pricePerPage.replace('₹', '') : '' %>"
+                        class="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                    >
+                </div>
+                <% } %>
+
+                <div>
+                    <label for="bio" class="block text-sm font-medium text-gray-300 mb-2">Bio</label>
+                    <textarea 
+                        name="bio" 
+                        id="bio"
+                        rows="4"
+                        class="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all resize-none"
+                    ><%= userData.bio || '' %></textarea>
+                </div>
+
+                <div>
+                    <label for="role" class="block text-sm font-medium text-gray-300 mb-2">Profile Type</label>
+                    <select 
+                        name="role" 
+                        id="role"
+                        class="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                    >
+                        <option value="writer" <%= userData.role === 'writer' || userData.role === 'Writer' ? 'selected' : '' %>>Writer</option>
+                        <option value="user" <%= userData.role === 'user' || userData.role === 'User' ? 'selected' : '' %>>User</option>
+                    </select>
+                </div>
+
+                <div class="flex space-x-4 mt-6">
+                    <button 
+                        type="submit" 
+                        class="flex-1 bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-300"
+                    >
+                        Update Profile
+                    </button>
+                    <button 
+                        type="button" 
+                        onclick="closeModal()"
+                        class="flex-1 bg-gray-600 hover:bg-gray-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-300"
+                    >
+                        Cancel
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+        
+        // User data from template
+        const user = {
+            name: "<%= userData.name %>",
+            email: "<%= userData.email %>",
+            mobile: "<%= userData.mobile %>",
+            role: "<%= userData.role %>",
+            rating: <%= userData.rating %>,
+            tasksCompleted: <%= userData.tasksCompleted %>,
+            totalTasks: <%= userData.totalTasks %>,
+            pricePerPage: "<%= userData.pricePerPage %>",
+            review: "<%= userData.review %>",
+            bio: "<%= userData.bio %>",
+            profileImage: "<%= userData.profileImage %>"
+        };
+        
+        // Star rating system
+        function renderStars(rating) {
+            const starContainer = document.getElementById('starRating');
+            starContainer.innerHTML = '';
+            
+            const fullStars = Math.floor(rating);
+            const hasHalfStar = rating % 1 !== 0;
+            
+            // Full stars
+            for (let i = 0; i < fullStars; i++) {
+                const star = document.createElement('div');
+                star.innerHTML = '<i data-lucide="star" class="w-4 h-4 star-filled"></i>';
+                starContainer.appendChild(star);
+            }
+            
+            // Half star
+            if (hasHalfStar) {
+                const halfStar = document.createElement('div');
+                halfStar.className = 'relative';
+                halfStar.innerHTML = `
+                    <i data-lucide="star" class="w-4 h-4 star-empty"></i>
+                    <div class="absolute inset-0 overflow-hidden" style="width: 50%">
+                        <i data-lucide="star" class="w-4 h-4 star-filled"></i>
+                    </div>
+                `;
+                starContainer.appendChild(halfStar);
+            }
+            
+            // Empty stars
+            const remainingStars = 5 - Math.ceil(rating);
+            for (let i = 0; i < remainingStars; i++) {
+                const star = document.createElement('div');
+                star.innerHTML = '<i data-lucide="star" class="w-4 h-4 star-empty"></i>';
+                starContainer.appendChild(star);
+            }
+            
+            lucide.createIcons();
+        }
+        
+        // Copy to clipboard functionality
+        function copyToClipboard(text, type) {
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(text).then(() => {
+                    showTooltip(`${type} copied to clipboard!`);
+                }).catch(err => {
+                    console.error('Failed to copy: ', err);
+                    showTooltip('Failed to copy to clipboard');
+                });
+            } else {
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = text;
+                document.body.appendChild(textArea);
+                textArea.focus();
+                textArea.select();
+                try {
+                    document.execCommand('copy');
+                    showTooltip(`${type} copied to clipboard!`);
+                } catch (err) {
+                    showTooltip('Failed to copy to clipboard');
+                }
+                document.body.removeChild(textArea);
+            }
+        }
+        
+        // Show tooltip notification
+        function showTooltip(message) {
+            const tooltip = document.createElement('div');
+            tooltip.textContent = message;
+            tooltip.className = 'tooltip';
+            document.body.appendChild(tooltip);
+            
+            setTimeout(() => {
+                if (document.body.contains(tooltip)) {
+                    tooltip.remove();
+                }
+            }, 3000);
+        }
+        
+        // Edit profile functionality
+        function editProfile() {
+            const modal = document.getElementById('editModal');
+            const modalContent = modal.querySelector('.modal-content');
+            
+            modal.classList.remove('hidden');
+            
+            // Animate modal appearance
+            setTimeout(() => {
+                modalContent.classList.remove('scale-95', 'opacity-0');
+                modalContent.classList.add('scale-100', 'opacity-100');
+            }, 10);
+        }
+        
+        // Close modal function
+        function closeModal() {
+            const modal = document.getElementById('editModal');
+            const modalContent = modal.querySelector('.modal-content');
+            
+            modalContent.classList.remove('scale-100', 'opacity-100');
+            modalContent.classList.add('scale-95', 'opacity-0');
+            
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300);
+        }
+        
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('editModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        };
+        
+        // Initialize application
+        document.addEventListener('DOMContentLoaded', function() {
+            // Render stars
+            renderStars(user.rating);
+            
+            // Add pulse animation to progress bar
+            setTimeout(() => {
+                const progressBar = document.querySelector('.progress-bar');
+                if (progressBar) {
+                    progressBar.classList.add('pulse-animation');
+                    setTimeout(() => {
+                        progressBar.classList.remove('pulse-animation');
+                    }, 3000);
+                }
+            }, 1000);
+            
+            // Add keyboard navigation
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    if (e.target.classList.contains('contact-card')) {
+                        e.target.click();
+                    }
+                }
+            });
+            
+            console.log('Profile Card loaded successfully! 🎉');
+        });
+    </script>
+</body>
+</html>

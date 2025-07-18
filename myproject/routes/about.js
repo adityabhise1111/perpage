@@ -1,7 +1,6 @@
 import express from 'express';
 import { User } from '../models/User.js';
 import mongoose from 'mongoose';
-
 const router = express.Router();
 
 
@@ -11,8 +10,8 @@ router.get('/', async (req, res) => {
   
 
     res.render('about');
-
-
+router.get('/', (req, res) => {
+  res.render('about');
 });
 
 export default router;
