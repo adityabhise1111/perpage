@@ -23,7 +23,7 @@ import authRoutes from './routes/auth.js';
 import homeRoutes from './routes/home.js';
 import dealRoutes from './routes/deal.js';
 import dashboardRoutes from './routes/dashboard.js';
-import about from './routes/about.js';
+
 
 dotenv.config();
 
@@ -87,7 +87,7 @@ app.use(methodOverride('_method'));
 
 // Default Route
 app.get('/', (req, res) => {
-  res.redirect('/home');
+  res.sendFile(path.join(__dirname, 'public', 'loading.html'));
 });
 
 // Start Server

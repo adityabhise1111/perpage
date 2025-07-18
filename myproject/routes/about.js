@@ -10,8 +10,6 @@ router.get('/', async (req, res) => {
   
 
     res.render('about');
-router.get('/', (req, res) => {
-  res.render('about');
 });
 
 export default router;
