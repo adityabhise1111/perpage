@@ -17,6 +17,7 @@ import methodOverride from 'method-override';
 
 // Route imports
 import profile from './routes/profile.js';
+import about from './routes/about.js';
 import authRoutes from './routes/auth.js';
 import homeRoutes from './routes/home.js';
 import dealRoutes from './routes/deal.js';
@@ -76,6 +77,7 @@ app.use('/deal', dealRoutes);     // /deal (uploads, forms)
 app.use('/dashboard', dashboardRoutes); // /dashboard view
 app.use('/writers', writerRoutes); // /writers (writer-specific routes)
 app.use('/profile', profile);      // /profile/:id (writer profile)
+app.use('/about', about);      // /profile/:id (writer profile)
 
 // For PUT and DELETE methods in forms
 app.use(methodOverride('_method')); 

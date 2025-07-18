@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>About | PerPage</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            primary: '#6366f1',
+            secondary: '#facc15'
+          }
+        }
+      }
+    };
+  </script>
+  <link href="https://cdn.jsdelivr.net/npm/daisyui@4.6.0/dist/full.css" rel="stylesheet" />
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
+</head>
+<body class="bg-black text-white">
+
+  <!-- Header -->
+  <div class="text-center py-12">
+    <h1 class="text-4xl font-bold text-white">About <span class="text-primary">PerPage</span></h1>
+    <p class="text-gray-400 mt-2">Your Academic Partner for Success</p>
+  </div>
+
+  <!-- Our Story -->
+  <!-- Our Story -->
+<section class="max-w-6xl mx-auto px-6 py-16 bg-gradient-to-br from-black via-gray-900 to-black rounded-lg shadow-xl" data-aos="fade-up">
+  <div class="grid md:grid-cols-2 gap-10 items-center">
+    
+    <!-- Left: Text Content -->
+    <div>
+      <h2 class="text-4xl md:text-5xl font-extrabold text-white mb-4 leading-tight">
+        Our <span class="text-primary">Story</span>
+      </h2>
+      <p class="text-gray-300 text-lg leading-relaxed">
+        PerPage began with one goal: to make academic help <span class="text-primary font-medium">easier, faster</span>, and more <span class="text-secondary font-medium">reliable</span>. We witnessed students struggle with deadlines while talented writers remained untapped. So, we built a platform where both meet — ensuring trust, quality, and professionalism.
+      </p>
+    </div>
+
+    <!-- Right: Visual Illustration -->
+    <div class="flex justify-center md:justify-end">
+      <div class="relative w-[260px] h-[260px] bg-gray-800 rounded-full flex items-center justify-center shadow-2xl hover:scale-105 transition-transform duration-300">
+        <img src="https://cdn-icons-png.flaticon.com/512/854/854878.png" alt="Writing Illustration" class="w-32 h-32" />
+        <div class="absolute top-2 right-4 text-yellow-400 text-3xl animate-bounce">★</div>
+        <div class="absolute bottom-2 left-4 text-yellow-500 text-2xl animate-bounce">★</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+  <!-- Animated Cards Section -->
+  <section class="max-w-6xl mx-auto px-4 my-16" >
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+
+      <!-- Vision Card -->
+      <div class="card bg-base-100 shadow-xl transition-transform hover:scale-105 hover:shadow-2xl" data-aos="fade-up" data-aos-duration="1000">
+        <div class="card-body" data-aos="zoom-in" data-aos-delay="300">
+            <div class="flex items-center gap-2">
+            <img src="image.png" alt="Vision Icon" class="w-6 h-6">
+            <h2 class="card-title text-primary">Our Vision</h2>
+            </div>
+          <p>To empower students globally by providing trusted academic assistance from real experts.</p>
+        </div>
+      </div>
+
+      <!-- Mission Card -->
+      <div class="card bg-base-100 shadow-xl transition-transform hover:scale-105 hover:shadow-2xl" data-aos="fade-up" data-aos-duration="1200">
+        <div class="card-body" data-aos="zoom-in" data-aos-delay="600">
+          <h2 class="card-title text-secondary">🎯 Our Mission</h2>
+          <p>To build a bridge between students and talented academic professionals, ensuring success, ethics, and excellence.</p>
+        </div>
+      </div>
+
+      <!-- Why Choose Us -->
+      <div class="card bg-base-100 shadow-xl transition-transform hover:scale-105 hover:shadow-2xl" data-aos="fade-up" data-aos-duration="1400">
+        <div class="card-body" data-aos="zoom-in" data-aos-delay="900">
+          <h2 class="card-title text-green-400">🌟 Why Choose PerPage?</h2>
+          <ul class="list-disc ml-4 text-sm text-gray-300 space-y-1">
+            <li>Verified & Skilled Academic Writers</li>
+            <li>Secure & Confidential Workflow</li>
+            <li>Fast Turnaround with Deadline Commitment</li>
+            <li>Direct Chat with Writers</li>
+            <li>Transparent Progress Tracking</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works -->
+  <section class="max-w-6xl mx-auto px-4 mt-20 mb-16">
+    <h2 class="text-3xl font-bold text-center mb-10 text-primary">⚙️ How PerPage Works</h2>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+
+      <div class="card bg-base-100 shadow-md hover:shadow-xl transform transition hover:scale-105">
+        <div class="card-body text-center">
+          <h3 class="font-bold text-xl mb-2 text-accent">1. Post Assignment</h3>
+          <p>Submit your assignment details and choose your subject category.</p>
+        </div>
+      </div>
+
+      <div class="card bg-base-100 shadow-md hover:shadow-xl transform transition hover:scale-105">
+        <div class="card-body text-center">
+          <h3 class="font-bold text-xl mb-2 text-accent">2. Choose Writer</h3>
+          <p>Get matched with top-rated academic experts and chat with them.</p>
+        </div>
+      </div>
+
+      <div class="card bg-base-100 shadow-md hover:shadow-xl transform transition hover:scale-105">
+        <div class="card-body text-center">
+          <h3 class="font-bold text-xl mb-2 text-accent">3. Get It Done</h3>
+          <p>Track progress and receive your assignment before deadline.</p>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Footer --> 
+  <footer class="text-center text-gray-500 py-10">
+    &copy; 2025 PerPage. All rights reserved.
+  </footer>
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>
+  AOS.init();
+</script>
+
+</body>
+</html>
