@@ -5,7 +5,10 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node index.js",
+    "test": "node test-resilience.js",
+    "test:connectivity": "node test-resilience.js --connectivity",
+    "test:startup": "node test-resilience.js --startup"
   },
   "keywords": [],
   "author": "",
@@ -36,6 +39,7 @@
     "routes": "^2.1.0"
   },
   "devDependencies": {
+    "axios": "^1.10.0",
     "nodemon": "^3.1.10"
   }
 }

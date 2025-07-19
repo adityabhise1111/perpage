@@ -36,26 +36,42 @@ passport.use(new GoogleStrategy({
   clientSecret: process.env.GOOGLE_CLIENT_SECRET,
   callbackURL: process.env.GOOGLE_CALLBACK_URL,
   }, async (accessToken, refreshToken, profile, done) => {
-  let user = await User.findOne({ googleId: profile.id });
-  if (!user) {
-    user = await User.create({
-      name: profile.displayName,
-      googleId: profile.id,
-      email: profile.emails[0].value,
-      profilePic: profile.photos && profile.photos.length > 0 ? profile.photos[0].value : null
-    
-    },
-    { upsert: true, new: true }
-  );
+  try {
+    let user = await User.findOne({ googleId: profile.id });
+    if (!user) {
+      user = await User.create({
+        name: profile.displayName,
+        googleId: profile.id,
+        email: profile.emails[0].value,
+        profilePic: profile.photos && profile.photos.length > 0 ? profile.photos[0].value : null
+      
+      },
+      { upsert: true, new: true }
+    );
+    }
+    return done(null, user);
+  } catch (error) {
+    console.error('❌ Google OAuth error:', error.message);
+    return done(new expressError('Google authentication failed', 500));
   }
-  return done(null, user);
   }));
   passport.serializeUser((user, done) => {
-  done(null, user.id);
+    try {
+      done(null, user.id);
+    } catch (error) {
+      console.error('❌ Serialize user error:', error.message);
+      done(error);
+    }
   });
+  
   passport.deserializeUser(async (id, done) => {
-  const user = await User.findById(id);
-  done(null, user);
+    try {
+      const user = await User.findById(id);
+      done(null, user);
+    } catch (error) {
+      console.error('❌ Deserialize user error:', error.message);
+      done(error);
+    }
   });
 
 

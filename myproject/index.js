@@ -10,6 +10,7 @@ import initialize from './config/passport-config.js';
 import connectDB from './config/db.js';
 import writerRoutes from './routes/writers.js';
 import methodOverride from 'method-override';
+import { checkDatabaseHealth, startDatabaseMonitor } from './utils/dbHealthCheck.js';
 
 
 
@@ -27,11 +28,41 @@ import dashboardRoutes from './routes/dashboard.js';
 
 dotenv.config();
 
+// Handle unhandled promise rejections
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('❌ Unhandled Promise Rejection:', reason);
+  console.error('Promise:', promise);
+  console.warn('⚠️ Application will continue running, but this should be investigated');
+});
+
+// Handle uncaught exceptions
+process.on('uncaughtException', (error) => {
+  console.error('❌ Uncaught Exception:', error.message);
+  console.error(error.stack);
+  console.error('💀 Application will exit');
+  process.exit(1);
+});
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+// Validate essential environment variables
+const requiredEnvVars = ['MONGO_URL'];
+const missingEnvVars = requiredEnvVars.filter(varName => !process.env[varName]);
+
+if (missingEnvVars.length > 0) {
+  console.error('❌ Missing required environment variables:');
+  missingEnvVars.forEach(varName => {
+    console.error(`   - ${varName}`);
+  });
+  console.error('Please check your .env file and ensure all required variables are set.');
+  process.exit(1);
+}
+
+console.log('✅ Environment variables validated');
+
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
 
 // // MongoDB Connection
 // const connectDB = async () => {
@@ -60,14 +91,26 @@ app.use(session({
   saveUninitialized: false,
   store: MongoStore.create({
     mongoUrl: process.env.MONGO_URL,
-    collectionName: 'sessions'
+    collectionName: 'sessions',
+    touchAfter: 24 * 3600, // lazy session update
+    ttl: 14 * 24 * 60 * 60, // 14 days
+    autoRemove: 'native'
+  }).on('error', (error) => {
+    console.error('❌ Session store error:', error.message);
+    console.warn('⚠️ Sessions may not persist properly without database connection');
   })
 }));
 
 // Passport Initialization
-initialize(passport);
-app.use(passport.initialize());
-app.use(passport.session());
+try {
+  initialize(passport);
+  app.use(passport.initialize());
+  app.use(passport.session());
+  console.log('✅ Passport initialized successfully');
+} catch (error) {
+  console.error('❌ Passport initialization failed:', error.message);
+  console.warn('⚠️ Authentication features may not work properly');
+}
 
 // Static Files (Optional)
 app.use(express.static(path.join(__dirname, 'public')));
@@ -87,25 +130,155 @@ app.use(methodOverride('_method'));
 
 // Default Route
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'loading.html'));
+  try {
+    res.sendFile(path.join(__dirname, 'public', 'loading.html'));
+  } catch (error) {
+    console.error('❌ Error serving loading page:', error.message);
+    res.status(500).send('Server Error');
+  }
+});
+
+// Global error handler
+app.use((err, req, res, next) => {
+  console.error('❌ Unhandled error:', err.message);
+  console.error(err.stack);
+  
+  // Handle different types of errors
+  if (err.name === 'ValidationError') {
+    return res.status(400).json({ error: 'Validation Error', details: err.message });
+  }
+  
+  if (err.name === 'CastError') {
+    return res.status(400).json({ error: 'Invalid ID format' });
+  }
+  
+  if (err.name === 'MongoError' || err.name === 'MongooseError') {
+    return res.status(503).json({ 
+      error: 'Database Error', 
+      message: 'Please try again later. If the problem persists, check your internet connection.' 
+    });
+  }
+  
+  // Default error response
+  const statusCode = err.statusCode || 500;
+  const message = process.env.NODE_ENV === 'production' 
+    ? 'Something went wrong!' 
+    : err.message;
+    
+  res.status(statusCode).json({ error: message });
+});
+
+// Handle 404 routes
+app.use((req, res) => {
+  res.status(404).json({ error: 'Page not found' });
 });
 
 // Start Server
 const startServer = async () => {
   try {
-    await connectDB();
-    app.listen(port, () => {
+    console.log('🚀 Starting server...');
+    
+    // Try to connect to database
+    try {
+      await connectDB();
+      console.log('✅ Database connection successful');
+      
+      // Start database monitoring after successful initial connection
+      startDatabaseMonitor();
+    } catch (dbError) {
+      console.error('❌ Database connection failed:', dbError.message);
+      console.warn('⚠️ Server will start without database connection');
+      console.warn('⚠️ Some features requiring database may not work');
+      
+      // Don't exit - allow server to start without DB for basic functionality
+    }
+    
+    // Start the server regardless of DB connection status
+    const server = app.listen(port, () => {
       console.log(`🚀 Server running at http://localhost:${port}`);
+      console.log('✅ Server started successfully');
     });
+    
+    // Handle server errors
+    server.on('error', (error) => {
+      if (error.code === 'EADDRINUSE') {
+        console.error(`❌ Port ${port} is already in use`);
+        console.error('Please close other applications using this port or use a different port');
+      } else {
+        console.error('❌ Server error:', error.message);
+      }
+      process.exit(1);
+    });
+    
+    // Graceful shutdown
+    process.on('SIGTERM', () => {
+      console.log('🛑 SIGTERM received, shutting down gracefully');
+      server.close(() => {
+        console.log('✅ Server closed');
+        mongoose.connection.close(false, () => {
+          console.log('✅ Database connection closed');
+          process.exit(0);
+        });
+      });
+    });
+    
+    process.on('SIGINT', () => {
+      console.log('🛑 SIGINT received, shutting down gracefully');
+      server.close(() => {
+        console.log('✅ Server closed');
+        mongoose.connection.close(false, () => {
+          console.log('✅ Database connection closed');
+          process.exit(0);
+        });
+      });
+    });
+    
   } catch (err) {
-    console.error('❌ Server failed to start:', err);
+    console.error('❌ Server failed to start:', err.message);
+    console.error(err.stack);
     process.exit(1);
   }
 };
 
 
 app.get('/api/test', (req, res) => {
-  res.send('Hello from Express!');
+  try {
+    res.status(200).json({ 
+      message: 'Hello from Express!', 
+      status: 'Server is running',
+      timestamp: new Date().toISOString(),
+      database: mongoose.connection.readyState === 1 ? 'Connected' : 'Disconnected'
+    });
+  } catch (error) {
+    console.error('❌ Test API error:', error.message);
+    res.status(500).json({ error: 'Test API failed' });
+  }
+});
+
+// Health check endpoint
+app.get('/health', (req, res) => {
+  try {
+    const dbHealth = checkDatabaseHealth();
+    const health = {
+      status: dbHealth.isHealthy ? 'OK' : 'DEGRADED',
+      timestamp: new Date().toISOString(),
+      uptime: process.uptime(),
+      environment: process.env.NODE_ENV || 'development',
+      database: dbHealth,
+      memory: process.memoryUsage(),
+      version: process.version
+    };
+    
+    const statusCode = dbHealth.isHealthy ? 200 : 503;
+    res.status(statusCode).json(health);
+  } catch (error) {
+    console.error('❌ Health check error:', error.message);
+    res.status(500).json({ 
+      status: 'ERROR', 
+      message: 'Health check failed',
+      timestamp: new Date().toISOString()
+    });
+  }
 });
 
 
