@@ -1,569 +1,459 @@
+<%
+// =============================================================================
+// TEMPLATE DATA - Default values if not provided by server
+// =============================================================================
+const defaultUser = {
+  name: "Kapil Kor",
+  email: "kapil@example.com",
+  mobile: "+91-XXXXXXXXXX",
+  role: "Writer",
+  pricePerPage: "₹5",
+  bio: "Passionate content creator specializing in high-quality writing and storytelling",
+  review: "Great work!",
+  tasksCompleted: 6,
+  totalTasks: 10,
+  rating: 4.5,
+  profileImage: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=400&h=400"
+};
+
+// Use provided user data or default
+const userData = typeof user !== 'undefined' ? user : defaultUser;
+%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profile - <%= userData.name %></title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        'primary': '#3b82f6',
-                        'secondary': '#8b5cf6',
-                        'accent': '#06b6d4'
-                    }
-                }
-            }
-        }
-    </script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+    <title>Profile Card Pro - <%= userData.name %></title>
     
+    <!-- External Dependencies -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    
+    <!-- Custom Styles -->
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        /* =============================================================================
+           CUSTOM CSS STYLES
+           ============================================================================= */
+        
+        /* Background and Layout */
+        .gradient-bg {
+            background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
+            min-height: 100vh;
         }
-
-        body {
-            background: linear-gradient(-45deg, #000000, #1a1a2e, #16213e, #0f3460);
-            background-size: 400% 400%;
-            animation: gradientShift 15s ease infinite;
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            overflow-x: hidden;
-        }
-
-        @keyframes gradientShift {
-            0%, 100% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-        }
-
-        /* Animations */
-        .fade-in {
-            opacity: 0;
-            transform: translateY(30px);
-            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .fade-in.animate-visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        .slide-up {
-            opacity: 0;
-            transform: translateY(50px);
-            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .slide-up.animate-visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        .slide-left {
-            opacity: 0;
-            transform: translateX(-30px);
-            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .slide-left.animate-visible {
-            opacity: 1;
-            transform: translateX(0);
-        }
-
-        .slide-right {
-            opacity: 0;
-            transform: translateX(30px);
-            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .slide-right.animate-visible {
-            opacity: 1;
-            transform: translateX(0);
-        }
-
-        .hover-scale {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .hover-scale:hover {
-            transform: translateY(-5px) scale(1.02);
-        }
-
-        /* Navigation */
-        .navbar {
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(59, 130, 246, 0.2);
+        
+        /* Card Styling */
+        .card-shadow {
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
             transition: all 0.3s ease;
         }
-
-        .nav-link {
+        
+        .card-shadow:hover {
+            box-shadow: 0 32px 64px -12px rgba(0, 0, 0, 0.4);
+        }
+        
+        /* Profile Header */
+        .profile-gradient {
+            background: linear-gradient(135deg, #ec4899 0%, #f59e0b 100%);
             position: relative;
-            transition: all 0.3s ease;
         }
-
-        .nav-link::after {
+        
+        .profile-gradient::after {
             content: '';
             position: absolute;
-            bottom: -5px;
-            left: 0;
-            width: 0;
-            height: 2px;
-            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            inset: 0;
+            background: linear-gradient(135deg, #ec4899 0%, #f59e0b 100%);
+            opacity: 0.9;
+        }
+        
+        /* Star Rating */
+        .star-filled {
+            color: #fbbf24;
+            fill: #fbbf24;
+        }
+        
+        .star-empty {
+            color: #d1d5db;
+        }
+        
+        /* Progress Bar */
+        .progress-bar {
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            border-radius: 9999px;
+            height: 12px;
             transition: width 0.3s ease;
         }
-
-        .nav-link:hover::after,
-        .nav-link.active::after {
-            width: 100%;
+        
+        /* Button Styling */
+        .btn-gradient {
+            background: linear-gradient(135deg, #ec4899 0%, #f59e0b 100%);
+            transition: all 0.3s ease;
         }
-
-        .nav-link:hover {
-            color: #60a5fa !important;
+        
+        .btn-gradient:hover {
+            background: linear-gradient(135deg, #db2777 0%, #d97706 100%);
+            transform: translateY(-2px);
         }
-
-        /* Profile specific styles */
-        .profile-card {
-            background: rgba(31, 41, 55, 0.7);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(59, 130, 246, 0.3);
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        
+        /* Stats Section */
+        .stats-gradient {
+            background: linear-gradient(135deg, #dbeafe 0%, #f3e8ff 100%);
         }
-
-        .profile-card:hover {
-            border-color: rgba(59, 130, 246, 0.6);
-            box-shadow: 0 25px 50px rgba(59, 130, 246, 0.2);
-        }
-
+        
+        /* Contact Cards */
         .contact-card {
-            background: rgba(31, 41, 55, 0.5);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(59, 130, 246, 0.2);
+            background: #f9fafb;
             transition: all 0.3s ease;
             cursor: pointer;
         }
-
+        
         .contact-card:hover {
-            background: rgba(31, 41, 55, 0.7);
-            border-color: rgba(59, 130, 246, 0.4);
-            transform: translateY(-3px);
-            box-shadow: 0 10px 25px rgba(59, 130, 246, 0.15);
-        }
-
-        .progress-bar {
-            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 50%, #06b6d4 100%);
-            transition: width 0.8s ease;
-            border-radius: 8px;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
-            transition: all 0.3s ease;
-        }
-
-        .btn-primary:hover {
-            background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
+            background: #f3f4f6;
             transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(59, 130, 246, 0.3);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
         }
-
-        /* Particles */
-        .particles {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: -1;
+        
+        /* Animations */
+        .fade-in {
+            animation: fadeIn 0.8s ease-in-out;
         }
-
-        .particle {
-            position: absolute;
-            background: #3b82f6;
-            border-radius: 50%;
-            opacity: 0.1;
-            animation: particleFloat 15s linear infinite;
-        }
-
-        .particle:nth-child(odd) {
-            background: #8b5cf6;
-        }
-
-        .particle:nth-child(3n) {
-            background: #06b6d4;
-        }
-
-        @keyframes particleFloat {
-            0% { 
-                transform: translateY(100vh) translateX(0) rotate(0deg);
+        
+        @keyframes fadeIn {
+            from {
                 opacity: 0;
+                transform: translateY(20px);
             }
-            10% { opacity: 0.1; }
-            90% { opacity: 0.1; }
-            100% { 
-                transform: translateY(-100px) translateX(100px) rotate(360deg);
-                opacity: 0;
+            to {
+                opacity: 1;
+                transform: translateY(0);
             }
         }
-
+        
+        .scale-hover {
+            transition: transform 0.3s ease;
+        }
+        
+        .scale-hover:hover {
+            transform: scale(1.02);
+        }
+        
+        .pulse-animation {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        /* Profile Image */
         .profile-image {
-            transition: all 0.3s ease;
+            transition: transform 0.3s ease;
         }
-
+        
         .profile-image:hover {
             transform: scale(1.05);
         }
-
-        /* Mobile menu styles */
-        #mobileMenu {
-            transition: transform 0.3s ease;
+        
+        /* Tooltip */
+        .tooltip {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #10b981;
+            color: white;
+            padding: 12px 16px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            animation: slideIn 0.3s ease-out;
         }
-
-        #mobileMenu.open {
-            transform: translateX(0);
+        
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
         }
-
-        /* Responsive adjustments */
+        
+        /* Responsive Design */
         @media (max-width: 768px) {
-            .profile-card {
+            .card-shadow {
                 margin: 1rem;
             }
             
-            .contact-card {
+            .profile-section {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .profile-image {
+                align-self: center;
                 margin-bottom: 1rem;
+            }
+        }
+        
+        /* Accessibility */
+        .contact-card:focus {
+            outline: 2px solid #3b82f6;
+            outline-offset: 2px;
+        }
+        
+        /* Print Styles */
+        @media print {
+            .btn-gradient, .tooltip {
+                display: none;
+            }
+            
+            .card-shadow {
+                box-shadow: none;
+                border: 1px solid #e5e7eb;
             }
         }
     </style>
 </head>
-
-<body>
-    <!-- Particles Background -->
-    <div class="particles fixed inset-0 pointer-events-none z-0"></div>
-
-    <!-- Mobile Menu Toggle -->
-    <button id="mobileMenuToggle" class="fixed top-4 right-4 z-50 md:hidden bg-gray-800 text-white p-3 rounded-lg shadow-lg">
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-        </svg>
-    </button>
-
-    <!-- Navigation -->
-    <nav class="navbar fixed top-0 left-0 right-0 z-40 transition-all duration-300">
-        <div class="container mx-auto px-6">
-            <div class="flex items-center justify-between h-16">
-                <!-- Logo -->
-                <a href="/dashboard" class="flex items-center space-x-3">
-                    <div class="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
-                        <span class="text-white font-bold text-lg">P</span>
-                    </div>
-                    <span class="text-white font-bold text-xl tracking-tight">PerPage</span>
-                </a>
-
-                <!-- Desktop Navigation -->
-                <div class="hidden md:flex items-center space-x-8">
-                    <a href="/dashboard" class="nav-link text-gray-300 hover:text-white px-3 py-2 rounded-lg transition-all duration-200">
-                        Dashboard
-                    </a>
-                    <a href="/writers" class="nav-link text-gray-300 hover:text-white px-3 py-2 rounded-lg transition-all duration-200">
-                        Writers
-                    </a>
-                    <a href="/profile" class="nav-link text-gray-300 hover:text-white px-3 py-2 rounded-lg transition-all duration-200">
-                        Profile
-                    </a>
-                    <a href="/profile1" class="nav-link active text-white px-3 py-2 rounded-lg transition-all duration-200">
-                        Profile1
-                    </a>
-                    <a href="/about" class="nav-link text-gray-300 hover:text-white px-3 py-2 rounded-lg transition-all duration-200">
-                        About
-                    </a>
-                    <% if (user) { %>
-                        <div class="flex items-center space-x-4">
-                            <div class="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
-                                <span class="text-white text-sm font-medium"><%= user.name.charAt(0) %></span>
-                            </div>
-                            <a href="/logout" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-all duration-200">
-                                Logout
-                            </a>
-                        </div>
-                    <% } %>
-                </div>
-
-                <!-- Mobile Navigation Menu -->
-                <div id="mobileMenu" class="fixed inset-0 bg-black bg-opacity-95 backdrop-filter backdrop-blur-sm md:hidden transform translate-x-full transition-transform duration-300 z-30">
-                    <div class="flex flex-col items-center justify-center h-full space-y-8">
-                        <a href="/dashboard" class="text-2xl text-gray-300 hover:text-white transition-colors">Dashboard</a>
-                        <a href="/writers" class="text-2xl text-gray-300 hover:text-white transition-colors">Writers</a>
-                        <a href="/profile" class="text-2xl text-gray-300 hover:text-white transition-colors">Profile</a>
-                        <a href="/profile1" class="text-2xl text-white font-semibold">Profile1</a>
-                        <a href="/about" class="text-2xl text-gray-300 hover:text-white transition-colors">About</a>
-                        <% if (user) { %>
-                            <a href="/logout" class="text-2xl text-red-400 hover:text-red-300 transition-colors">Logout</a>
-                        <% } %>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </nav>
-
-    <!-- Profile Section -->
-    <section class="py-16 relative overflow-hidden mt-16">
-        <!-- Background Elements -->
-        <div class="absolute inset-0 opacity-10">
-            <div class="absolute top-10 left-10 w-32 h-32 bg-blue-500 rounded-full filter blur-3xl"></div>
-            <div class="absolute bottom-10 right-10 w-32 h-32 bg-purple-500 rounded-full filter blur-3xl"></div>
+<body class="gradient-bg flex items-center justify-center p-4">
+    <!-- =============================================================================
+         PROFILE CARD TEMPLATE
+         ============================================================================= -->
+    
+    <div class="w-full max-w-2xl bg-white rounded-2xl card-shadow overflow-hidden scale-hover fade-in">
+        <!-- Header Section -->
+        <div class="h-32 profile-gradient relative">
+            <div class="absolute inset-0 bg-gradient-to-r from-pink-500 to-orange-500 opacity-90"></div>
+            <!-- Decorative Elements -->
+            <div class="absolute top-4 right-4 w-16 h-16 rounded-full bg-white opacity-10"></div>
+            <div class="absolute bottom-4 left-4 w-8 h-8 rounded-full bg-white opacity-20"></div>
+            <div class="absolute top-8 left-8 w-4 h-4 rounded-full bg-white opacity-30"></div>
         </div>
         
-        <div class="container mx-auto px-6 max-w-4xl relative z-10">
-            <!-- Profile Card -->
-            <div class="profile-card rounded-3xl overflow-hidden shadow-2xl hover-scale fade-in">
-                <!-- Profile Header -->
-                <div class="h-40 relative overflow-hidden" style="background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);">
-                    <div class="absolute inset-0 opacity-20">
-                        <div class="absolute top-6 right-6 w-20 h-20 rounded-full bg-white opacity-30"></div>
-                        <div class="absolute bottom-6 left-6 w-12 h-12 rounded-full bg-white opacity-40"></div>
-                        <div class="absolute top-12 left-12 w-6 h-6 rounded-full bg-white opacity-50"></div>
+        <!-- Profile Content -->
+        <div class="relative px-8 pb-8">
+            <!-- Profile Section -->
+            <div class="flex items-start space-x-6 -mt-16 mb-8 profile-section">
+                <!-- Profile Picture -->
+                <div class="flex-shrink-0">
+                    <img 
+                        id="profileImage"
+                        src="<%= userData.profileImage %>"
+                        alt="<%= userData.name %> Profile Picture"
+                        class="w-28 h-28 rounded-full border-4 border-white shadow-lg object-cover profile-image"
+                        onerror="this.src='https://via.placeholder.com/112x112/ec4899/ffffff?text=<%= userData.name.charAt(0) %>'"
+                    />
+                </div>
+                
+                <!-- User Information -->
+                <div class="flex-1 mt-4">
+                    <h1 class="text-3xl font-bold text-gray-800 mb-2"><%= userData.name %></h1>
+                    <div class="flex items-center space-x-4 mb-3">
+                        <p class="text-xl text-gray-600 font-medium"><%= userData.role %></p>
+                        <div class="flex items-center space-x-1">
+                            <div id="starRating" class="flex items-center space-x-1">
+                                <!-- Stars populated by JavaScript -->
+                            </div>
+                            <span class="text-sm text-gray-500 ml-1">(<%= userData.rating %>)</span>
+                        </div>
+                    </div>
+                    <p class="text-sm text-gray-600 leading-relaxed"><%= userData.bio %></p>
+                </div>
+            </div>
+            
+            <!-- Contact Information Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                <div class="space-y-4">
+                    <!-- Email Card -->
+                    <div class="contact-card rounded-lg p-4" 
+                         onclick="copyToClipboard('<%= userData.email %>', 'Email')"
+                         tabindex="0"
+                         role="button"
+                         aria-label="Copy email address">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 bg-blue-50 rounded-full flex items-center justify-center">
+                                <i data-lucide="mail" class="w-5 h-5 text-blue-500"></i>
+                            </div>
+                            <div>
+                                <span class="text-xs text-gray-500 uppercase tracking-wide">Email</span>
+                                <p class="text-sm font-medium text-gray-800"><%= userData.email %></p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Mobile Card -->
+                    <div class="contact-card rounded-lg p-4"
+                         onclick="copyToClipboard('<%= userData.mobile %>', 'Mobile')"
+                         tabindex="0"
+                         role="button"
+                         aria-label="Copy mobile number">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 bg-green-50 rounded-full flex items-center justify-center">
+                                <i data-lucide="phone" class="w-5 h-5 text-green-500"></i>
+                            </div>
+                            <div>
+                                <span class="text-xs text-gray-500 uppercase tracking-wide">Mobile</span>
+                                <p class="text-sm font-medium text-gray-800"><%= userData.mobile %></p>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 
-                <!-- Profile Content -->
-                <div class="relative px-8 pb-8">
-                    <!-- Profile Picture & Basic Info -->
-                    <div class="flex flex-col md:flex-row items-center md:items-start space-y-6 md:space-y-0 md:space-x-8 -mt-20 mb-8">
-                        <!-- Profile Picture -->
-                        <div class="flex-shrink-0">
-                            <img 
-                                id="profileImage"
-                                src="<%= userData.profileImage %>"
-                                alt="<%= userData.name %> Profile Picture"
-                                class="w-32 h-32 rounded-full border-4 border-gray-800 shadow-xl object-cover profile-image"
-                                onerror="this.src='https://via.placeholder.com/128x128/3b82f6/ffffff?text=<%= userData.name.charAt(0) %>'"
-                            />
-                        </div>
-                        
-                        <!-- User Information -->
-                        <div class="flex-1 text-center md:text-left mt-6 md:mt-4">
-                            <h1 class="text-4xl font-bold text-white mb-4">
-                                <%= userData.name %>
-                            </h1>
-                            <div class="flex flex-col md:flex-row items-center md:items-start space-y-2 md:space-y-0 md:space-x-6 mb-4">
-                                <p class="text-xl text-blue-400 font-semibold"><%= userData.role %></p>
-                                <div class="flex items-center space-x-2">
-                                    <div id="starRating" class="flex items-center space-x-1">
-                                        <!-- Stars populated by JavaScript -->
-                                    </div>
-                                    <span class="text-sm text-gray-400">(<%= userData.rating %>)</span>
-                                </div>
+                <div class="space-y-4">
+                    <!-- Price Card -->
+                    <div class="contact-card rounded-lg p-4"
+                         onclick="copyToClipboard('<%= userData.pricePerPage %>', 'Price')"
+                         tabindex="0"
+                         role="button"
+                         aria-label="Copy price per page">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 bg-orange-50 rounded-full flex items-center justify-center">
+                                <i data-lucide="indian-rupee" class="w-5 h-5 text-orange-500"></i>
                             </div>
-                            <p class="text-gray-300 leading-relaxed max-w-lg"><%= userData.bio %></p>
-                        </div>
-                    </div>
-                    
-                    <!-- Contact Information Grid -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                        <!-- Email Card -->
-                        <div class="contact-card rounded-xl p-4 hover-scale" 
-                             onclick="copyToClipboard('<%= userData.email %>', 'Email')"
-                             tabindex="0"
-                             role="button"
-                             aria-label="Copy email address">
-                            <div class="flex flex-col items-center text-center space-y-3">
-                                <div class="w-12 h-12 bg-blue-500 bg-opacity-20 rounded-full flex items-center justify-center">
-                                    <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
-                                    </svg>
-                                </div>
-                                <div>
-                                    <span class="text-xs text-gray-400 uppercase tracking-wide font-medium">Email</span>
-                                    <p class="text-sm font-semibold text-white mt-1"><%= userData.email %></p>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- Mobile Card -->
-                        <div class="contact-card rounded-xl p-4 hover-scale"
-                             onclick="copyToClipboard('<%= userData.mobile %>', 'Mobile')"
-                             tabindex="0"
-                             role="button"
-                             aria-label="Copy mobile number">
-                            <div class="flex flex-col items-center text-center space-y-3">
-                                <div class="w-12 h-12 bg-green-500 bg-opacity-20 rounded-full flex items-center justify-center">
-                                    <svg class="w-6 h-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
-                                    </svg>
-                                </div>
-                                <div>
-                                    <span class="text-xs text-gray-400 uppercase tracking-wide font-medium">Mobile</span>
-                                    <p class="text-sm font-semibold text-white mt-1"><%= userData.mobile %></p>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- Price Card -->
-                        <div class="contact-card rounded-xl p-4 hover-scale"
-                             onclick="copyToClipboard('<%= userData.pricePerPage %>', 'Price')"
-                             tabindex="0"
-                             role="button"
-                             aria-label="Copy price per page">
-                            <div class="flex flex-col items-center text-center space-y-3">
-                                <div class="w-12 h-12 bg-orange-500 bg-opacity-20 rounded-full flex items-center justify-center">
-                                    <svg class="w-6 h-6 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
-                                    </svg>
-                                </div>
-                                <div>
-                                    <span class="text-xs text-gray-400 uppercase tracking-wide font-medium">Price/Page</span>
-                                    <p class="text-sm font-semibold text-white mt-1"><%= userData.pricePerPage %></p>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- Review Card -->
-                        <div class="contact-card rounded-xl p-4 hover-scale"
-                             onclick="copyToClipboard('<%= userData.review %>', 'Review')"
-                             tabindex="0"
-                             role="button"
-                             aria-label="Copy latest review">
-                            <div class="flex flex-col items-center text-center space-y-3">
-                                <div class="w-12 h-12 bg-purple-500 bg-opacity-20 rounded-full flex items-center justify-center">
-                                    <svg class="w-6 h-6 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
-                                    </svg>
-                                </div>
-                                <div>
-                                    <span class="text-xs text-gray-400 uppercase tracking-wide font-medium">Latest Review</span>
-                                    <p class="text-sm font-semibold text-white mt-1">"<%= userData.review %>"</p>
-                                </div>
+                            <div>
+                                <span class="text-xs text-gray-500 uppercase tracking-wide">Price Per Page</span>
+                                <p class="text-sm font-medium text-gray-800"><%= userData.pricePerPage %></p>
                             </div>
                         </div>
                     </div>
                     
-                    <!-- Statistics Section -->
-                    <div class="profile-card rounded-2xl p-8 mb-8 border border-gray-700">
-                        <div class="flex flex-col md:flex-row items-center justify-between space-y-6 md:space-y-0">
-                            <div class="flex items-center space-x-8">
-                                <div class="text-center">
-                                    <div class="text-3xl font-bold text-blue-400"><%= userData.tasksCompleted %></div>
-                                    <div class="text-sm text-gray-400 uppercase tracking-wide font-medium">Completed</div>
-                                </div>
-                                <div class="w-px h-12 bg-gray-600"></div>
-                                <div class="text-center">
-                                    <div class="text-3xl font-bold text-purple-400"><%= userData.totalTasks %></div>
-                                    <div class="text-sm text-gray-400 uppercase tracking-wide font-medium">Total Tasks</div>
-                                </div>
+                    <!-- Review Card -->
+                    <div class="contact-card rounded-lg p-4"
+                         onclick="copyToClipboard('<%= userData.review %>', 'Review')"
+                         tabindex="0"
+                         role="button"
+                         aria-label="Copy latest review">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 bg-purple-50 rounded-full flex items-center justify-center">
+                                <i data-lucide="quote" class="w-5 h-5 text-purple-500"></i>
                             </div>
-                            <div class="text-center md:text-right">
-                                <div class="text-xl font-bold text-white mb-3">Progress</div>
-                                <div class="w-40 bg-gray-700 rounded-full h-4 shadow-inner">
-                                    <div class="progress-bar h-4 rounded-full" style="width: <%= Math.round((userData.tasksCompleted / userData.totalTasks) * 100) %>%"></div>
-                                </div>
-                                <div class="text-sm text-gray-400 mt-2 font-medium"><%= Math.round((userData.tasksCompleted / userData.totalTasks) * 100) %>% Complete</div>
+                            <div>
+                                <span class="text-xs text-gray-500 uppercase tracking-wide">Latest Review</span>
+                                <p class="text-sm font-medium text-gray-800">"<%= userData.review %>"</p>
                             </div>
                         </div>
-                    </div>
-                    
-                    <!-- Action Buttons -->
-                    <div class="flex flex-col sm:flex-row gap-4">
-                        <button 
-                            class="flex-1 btn-primary text-white font-bold py-4 px-8 rounded-xl shadow-lg transform transition-all duration-300 flex items-center justify-center"
-                            onclick="editProfile()"
-                            aria-label="Edit profile information"
-                        >
-                            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
-                            </svg>
-                            Edit Profile
-                        </button>
-                        <a href="/dashboard" class="flex-1 bg-gray-700 hover:bg-gray-600 text-white font-bold py-4 px-8 rounded-xl shadow-lg transform transition-all duration-300 flex items-center justify-center">
-                            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-                            </svg>
-                            Dashboard
-                        </a>
-                    </div>
-                    
-                    <!-- Footer -->
-                    <div class="mt-8 text-center">
-                        <p class="text-xs text-gray-500">
-                            PerPage Profile • <%= new Date().getFullYear() %>
-                        </p>
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
-
-    <!-- JavaScript -->
-    <script>
-        // User data from template
-        const userData = {
-            name: '<%= userData.name %>',
-            rating: <%= userData.rating || 0 %>
-        };
-
-        // Initialize when DOM is loaded
-        document.addEventListener('DOMContentLoaded', function() {
-            initializeStarRating();
-            setupParticles();
-            initializeScrollAnimations();
-            setupMobileMenu();
-        });
-
-        // Star rating system
-        function initializeStarRating() {
-            const starRating = document.getElementById('starRating');
-            const rating = userData.rating;
-            const maxStars = 5;
             
-            // Clear existing stars
-            starRating.innerHTML = '';
+            <!-- Statistics Section -->
+            <div class="stats-gradient rounded-xl p-6 mb-8">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-4">
+                        <div class="text-center">
+                            <div class="text-2xl font-bold text-blue-500"><%= userData.tasksCompleted %></div>
+                            <div class="text-xs text-gray-500 uppercase tracking-wide">Completed</div>
+                        </div>
+                        <div class="w-px h-8 bg-gray-300"></div>
+                        <div class="text-center">
+                            <div class="text-2xl font-bold text-purple-500"><%= userData.totalTasks %></div>
+                            <div class="text-xs text-gray-500 uppercase tracking-wide">Total Tasks</div>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-lg font-semibold text-gray-700">Progress</div>
+                        <div class="mt-2">
+                            <div class="w-32 bg-gray-200 rounded-full h-3">
+                                <div class="progress-bar" style="width: <%= Math.round((userData.tasksCompleted / userData.totalTasks) * 100) %>%"></div>
+                            </div>
+                            <div class="text-xs text-gray-500 mt-1"><%= Math.round((userData.tasksCompleted / userData.totalTasks) * 100) %>% Complete</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Action Button -->
+            <div class="mt-8">
+                <button 
+                    class="w-full btn-gradient hover:shadow-lg text-white font-semibold py-3 px-6 rounded-xl shadow-md transform transition-all duration-200"
+                    onclick="editProfile()"
+                    aria-label="Edit profile information"
+                >
+                    <i data-lucide="edit" class="w-4 h-4 mr-2 inline"></i>
+                    Edit Profile
+                </button>
+            </div>
+            
+            <!-- Footer -->
+            <div class="mt-6 text-center">
+                <p class="text-xs text-gray-400">
+                    Profile Card Pro • Single File Edition • <%= new Date().getFullYear() %>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- =============================================================================
+         JAVASCRIPT FUNCTIONALITY
+         ============================================================================= -->
+    
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+        
+        // User data from template
+        const user = {
+            name: "<%= userData.name %>",
+            email: "<%= userData.email %>",
+            mobile: "<%= userData.mobile %>",
+            role: "<%= userData.role %>",
+            rating: <%= userData.rating %>,
+            tasksCompleted: <%= userData.tasksCompleted %>,
+            totalTasks: <%= userData.totalTasks %>,
+            pricePerPage: "<%= userData.pricePerPage %>",
+            review: "<%= userData.review %>",
+            bio: "<%= userData.bio %>",
+            profileImage: "<%= userData.profileImage %>"
+        };
+        
+        // Star rating system
+        function renderStars(rating) {
+            const starContainer = document.getElementById('starRating');
+            starContainer.innerHTML = '';
+            
+            const fullStars = Math.floor(rating);
+            const hasHalfStar = rating % 1 !== 0;
             
             // Full stars
-            for (let i = 0; i < Math.floor(rating); i++) {
-                starRating.innerHTML += `
-                    <svg class="w-4 h-4 text-yellow-400 fill-current" viewBox="0 0 20 20">
-                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
-                    </svg>
-                `;
+            for (let i = 0; i < fullStars; i++) {
+                const star = document.createElement('div');
+                star.innerHTML = '<i data-lucide="star" class="w-4 h-4 star-filled"></i>';
+                starContainer.appendChild(star);
             }
             
             // Half star
-            if (rating % 1 >= 0.5) {
-                starRating.innerHTML += `
-                    <svg class="w-4 h-4 text-yellow-400" viewBox="0 0 20 20">
-                        <defs>
-                            <linearGradient id="half-fill">
-                                <stop offset="50%" stop-color="currentColor"/>
-                                <stop offset="50%" stop-color="transparent"/>
-                            </linearGradient>
-                        </defs>
-                        <path fill="url(#half-fill)" d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
-                    </svg>
+            if (hasHalfStar) {
+                const halfStar = document.createElement('div');
+                halfStar.className = 'relative';
+                halfStar.innerHTML = `
+                    <i data-lucide="star" class="w-4 h-4 star-empty"></i>
+                    <div class="absolute inset-0 overflow-hidden" style="width: 50%">
+                        <i data-lucide="star" class="w-4 h-4 star-filled"></i>
+                    </div>
                 `;
+                starContainer.appendChild(halfStar);
             }
             
             // Empty stars
-            const emptyStars = maxStars - Math.ceil(rating);
-            for (let i = 0; i < emptyStars; i++) {
-                starRating.innerHTML += `
-                    <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"></path>
-                    </svg>
-                `;
+            const remainingStars = 5 - Math.ceil(rating);
+            for (let i = 0; i < remainingStars; i++) {
+                const star = document.createElement('div');
+                star.innerHTML = '<i data-lucide="star" class="w-4 h-4 star-empty"></i>';
+                starContainer.appendChild(star);
             }
+            
+            lucide.createIcons();
         }
-
+        
         // Copy to clipboard functionality
         function copyToClipboard(text, type) {
             if (navigator.clipboard) {
                 navigator.clipboard.writeText(text).then(() => {
-                    showToast(`${type} copied to clipboard!`);
+                    showTooltip(`${type} copied to clipboard!`);
                 }).catch(err => {
-                    console.error('Could not copy text: ', err);
-                    showToast('Failed to copy to clipboard');
+                    console.error('Failed to copy: ', err);
+                    showTooltip('Failed to copy to clipboard');
                 });
             } else {
                 // Fallback for older browsers
@@ -574,109 +464,146 @@
                 textArea.select();
                 try {
                     document.execCommand('copy');
-                    showToast(`${type} copied to clipboard!`);
+                    showTooltip(`${type} copied to clipboard!`);
                 } catch (err) {
-                    console.error('Fallback: Could not copy text: ', err);
-                    showToast('Failed to copy to clipboard');
+                    showTooltip('Failed to copy to clipboard');
                 }
                 document.body.removeChild(textArea);
             }
         }
-
-        // Toast notification
-        function showToast(message) {
-            // Remove existing toast
-            const existingToast = document.getElementById('toast');
-            if (existingToast) {
-                existingToast.remove();
-            }
-
-            // Create new toast
-            const toast = document.createElement('div');
-            toast.id = 'toast';
-            toast.className = 'fixed bottom-4 right-4 bg-blue-600 text-white px-6 py-3 rounded-lg shadow-lg transform translate-y-full opacity-0 transition-all duration-300 z-50';
-            toast.textContent = message;
-            document.body.appendChild(toast);
+        
+        // Show tooltip notification
+        function showTooltip(message) {
+            const tooltip = document.createElement('div');
+            tooltip.textContent = message;
+            tooltip.className = 'tooltip';
+            document.body.appendChild(tooltip);
             
-            // Animate in
             setTimeout(() => {
-                toast.classList.remove('translate-y-full', 'opacity-0');
-                toast.classList.add('translate-y-0', 'opacity-100');
-            }, 10);
-            
-            // Animate out
-            setTimeout(() => {
-                toast.classList.add('translate-y-full', 'opacity-0');
-                toast.classList.remove('translate-y-0', 'opacity-100');
-                setTimeout(() => toast.remove(), 300);
+                if (document.body.contains(tooltip)) {
+                    tooltip.remove();
+                }
             }, 3000);
         }
-
+        
         // Edit profile functionality
         function editProfile() {
-            showToast('Edit profile feature coming soon!');
-        }
+            const actions = [
+                { label: 'Edit Name', action: () => editField('name', 'Enter new name:', user.name) },
+                { label: 'Edit Role', action: () => editField('role', 'Enter new role:', user.role) },
+                { label: 'Edit Bio', action: () => editField('bio', 'Enter new bio:', user.bio) },
+                { label: 'Edit Email', action: () => editField('email', 'Enter new email:', user.email) },
+                { label: 'Edit Mobile', action: () => editField('mobile', 'Enter new mobile:', user.mobile) },
+                { label: 'Cancel', action: () => {} }
+            ];
+            
+            const choice = prompt(`Choose what to edit:
+1. Name
+2. Role  
+3. Bio
+4. Email
+5. Mobile
+6. Cancel
 
-        // Particle background system
-        function setupParticles() {
-            const particlesContainer = document.querySelector('.particles');
-            if (!particlesContainer) return;
+Enter number (1-6):`);
             
-            // Clear existing particles
-            particlesContainer.innerHTML = '';
-            
-            for (let i = 0; i < 30; i++) {
-                const particle = document.createElement('div');
-                particle.className = 'particle';
-                particle.style.left = Math.random() * 100 + '%';
-                particle.style.width = (Math.random() * 4 + 2) + 'px';
-                particle.style.height = particle.style.width;
-                particle.style.animationDelay = Math.random() * 15 + 's';
-                particle.style.animationDuration = (Math.random() * 15 + 10) + 's';
-                particlesContainer.appendChild(particle);
+            const index = parseInt(choice) - 1;
+            if (index >= 0 && index < actions.length) {
+                actions[index].action();
             }
         }
-
-        // Scroll animations
-        function initializeScrollAnimations() {
-            const observerOptions = {
-                threshold: 0.1,
-                rootMargin: '0px 0px -50px 0px'
-            };
-
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('animate-visible');
-                    }
-                });
-            }, observerOptions);
-
-            document.querySelectorAll('.fade-in, .slide-up, .slide-left, .slide-right').forEach(el => {
-                observer.observe(el);
-            });
+        
+        // Edit individual field
+        function editField(field, prompt_text, currentValue) {
+            const newValue = prompt(prompt_text, currentValue);
+            if (newValue && newValue.trim() && newValue !== currentValue) {
+                user[field] = newValue.trim();
+                updateDisplay(field, newValue.trim());
+                showTooltip(`${field.charAt(0).toUpperCase() + field.slice(1)} updated!`);
+            }
         }
-
-        // Mobile menu setup
-        function setupMobileMenu() {
-            const mobileMenuToggle = document.getElementById('mobileMenuToggle');
-            const mobileMenu = document.getElementById('mobileMenu');
-
-            mobileMenuToggle.addEventListener('click', () => {
-                mobileMenu.classList.toggle('open');
-            });
-
-            // Close menu when clicking on a link
-            mobileMenu.addEventListener('click', (e) => {
-                if (e.target.tagName === 'A') {
-                    mobileMenu.classList.remove('open');
+        
+        // Update display after editing
+        function updateDisplay(field, value) {
+            switch(field) {
+                case 'name':
+                    document.querySelector('h1').textContent = value;
+                    document.title = `Profile Card Pro - ${value}`;
+                    break;
+                case 'role':
+                    document.querySelector('.text-xl.text-gray-600').textContent = value;
+                    break;
+                case 'bio':
+                    document.querySelector('.text-sm.text-gray-600.leading-relaxed').textContent = value;
+                    break;
+                case 'email':
+                    document.querySelector('.contact-card p').textContent = value;
+                    break;
+                case 'mobile':
+                    document.querySelectorAll('.contact-card p')[1].textContent = value;
+                    break;
+            }
+        }
+        
+        // Initialize application
+        document.addEventListener('DOMContentLoaded', function() {
+            // Render stars
+            renderStars(user.rating);
+            
+            // Add pulse animation to progress bar
+            setTimeout(() => {
+                const progressBar = document.querySelector('.progress-bar');
+                if (progressBar) {
+                    progressBar.classList.add('pulse-animation');
+                    setTimeout(() => {
+                        progressBar.classList.remove('pulse-animation');
+                    }, 3000);
+                }
+            }, 1000);
+            
+            // Add keyboard navigation
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    if (e.target.classList.contains('contact-card')) {
+                        e.target.click();
+                    }
                 }
             });
+            
+            // Console welcome message
+            console.log(`
+            🎉 Profile Card Pro - Single File Edition
+            
+            👤 User: ${user.name}
+            ⭐ Rating: ${user.rating}/5 stars
+            📊 Progress: ${Math.round((user.tasksCompleted / user.totalTasks) * 100)}%
+            
+            🎯 Features:
+            ✅ Complete single-file solution
+            ✅ Click any contact card to copy
+            ✅ Interactive star ratings
+            ✅ Editable profile fields
+            ✅ Responsive design
+            ✅ Keyboard navigation
+            ✅ Accessibility features
+            
+            🚀 Built with ❤️ using EJS + Express
+            `);
+        });
+        
+        // Analytics (optional)
+        function trackEvent(event, data) {
+            console.log(`Event: ${event}`, data);
+            // Add your analytics code here
         }
-
-        // Enhanced profile image error handling
-        document.getElementById('profileImage').addEventListener('error', function() {
-            this.src = `https://via.placeholder.com/128x128/3b82f6/ffffff?text=${userData.name.charAt(0)}`;
+        
+        // Track interactions
+        document.addEventListener('click', function(e) {
+            if (e.target.closest('.contact-card')) {
+                trackEvent('contact_card_click', {
+                    type: e.target.closest('.contact-card').querySelector('span').textContent
+                });
+            }
         });
     </script>
 </body>

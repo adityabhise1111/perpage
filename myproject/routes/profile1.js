@@ -22,7 +22,7 @@ router.get('/:id', isAuthenticated, async (req, res) => {
   try {
     const user = await User.findById(id);
     if (!user) return res.status(404).send('User not found');
-    res.render('profile1', { writer: user });
+    res.render('profile2', { writer: user });
   } catch (error) {
     console.error(error);
     res.status(500).send('Server Error');
